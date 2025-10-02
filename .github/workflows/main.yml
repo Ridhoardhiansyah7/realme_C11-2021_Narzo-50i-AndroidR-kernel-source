@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       defconfig:
-        description: 'Kernel defconfig name (e.g., rmx3263_defconfig)'
+        description: 'Kernel defconfig name'
         required: true
-        default: 'rmx3263_defconfig'
+        default: 'sprd_sharkl3_defconfig'
 
 jobs:
   build:
