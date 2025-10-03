@@ -18,7 +18,7 @@ jobs:
       KERNEL_ROOT: ${{ github.workspace }}
       ARCH: arm64
       KBUILD_BUILD_USER: '@aflahal'
-      
+      DTC_NO_YAML: 1
       # Ccache Flags
       USE_CCACHE: 1
       CCACHE_EXEC: /usr/bin/ccache
