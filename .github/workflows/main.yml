@@ -120,7 +120,9 @@ jobs:
         run: |
           echo -e "\n[INFO]: KERNEL BUILD STARTED..!\n"
           
-          export DTC_NO_YAML=1
+      
+          # Remove yamltree.o from Makefile so dtc never links yaml
+          sed -i '/yamltree.o/d' scripts/dtc/Makefile
 
 
           make -C "${{ github.workspace }}" O="${{ github.workspace }}/out" ARCH=${{ env.ARCH }} ${{ inputs.defconfig }} || exit 1
