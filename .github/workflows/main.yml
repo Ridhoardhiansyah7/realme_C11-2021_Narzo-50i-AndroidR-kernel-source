@@ -120,10 +120,7 @@ jobs:
         run: |
           echo -e "\n[INFO]: KERNEL BUILD STARTED..!\n"
           
-      
-          
-
-         # Disable yaml completely
+        
          sed -i '/yamltree.o/d' scripts/dtc/Makefile
          sed -i '/dt_to_yaml/d' scripts/dtc/dtc.c
 
