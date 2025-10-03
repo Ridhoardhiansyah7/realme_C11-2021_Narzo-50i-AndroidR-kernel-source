@@ -120,6 +120,9 @@ jobs:
         run: |
           echo -e "\n[INFO]: KERNEL BUILD STARTED..!\n"
           
+          export DTC_NO_YAML=1
+
+
           make -C "${{ github.workspace }}" O="${{ github.workspace }}/out" ARCH=${{ env.ARCH }} ${{ inputs.defconfig }} || exit 1
             
           make -C "${{ github.workspace }}" \
