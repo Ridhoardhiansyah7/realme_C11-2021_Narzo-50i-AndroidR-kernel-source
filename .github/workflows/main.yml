@@ -7,7 +7,7 @@ on:
       defconfig:
         description: 'Kernel defconfig name'
         required: true
-        default: 'sprd_sharkl3_defconfig'
+        default: 'RMX3235_defconfig'
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       # General Build Variables
       KERNEL_ROOT: ${{ github.workspace }}
       ARCH: arm64
-      KBUILD_BUILD_USER: '@aflahal'
+      KBUILD_BUILD_USER: '@Aflahal'
       # Ccache Flags
       USE_CCACHE: 1
       CCACHE_EXEC: /usr/bin/ccache
