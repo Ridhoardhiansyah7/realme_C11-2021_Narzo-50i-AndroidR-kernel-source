@@ -135,6 +135,7 @@ jobs:
             NM="llvm-nm" \
             OBJCOPY="llvm-objcopy" \
             OBJDUMP="llvm-objdump" \
+            DTC_NO_YAML=1 \
             STRIP="llvm-strip" \
             CROSS_COMPILE="${{ env.CROSS_COMPILE }}" \
             CROSS_COMPILE_ARM32="${{ env.CROSS_COMPILE_ARM32 }}" \
