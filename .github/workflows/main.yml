@@ -84,9 +84,9 @@ jobs:
           echo "[INFO]: Installing system requirements..."
           sudo apt-get update
           sudo apt-get install -y --fix-missing \
-            git device-tree-compiler lz4 xz-utils zlib1g-dev zip make gcc g++ \
-            python3 python-is-python3 libncurses-dev flex bison gperf libssl-dev \
-            libelf-dev kmod pahole zstd libyaml-dev ccache
+           git device-tree-compiler lz4 xz-utils zlib1g-dev zip make gcc g++ \
+           python3 python-is-python3 libncurses-dev flex bison gperf libssl-dev \
+           libelf-dev kmod pahole zstd libyaml-dev libyaml-0-2 pkg-config build-essential ccache
 
       - name: Download and Set up Toolchains
         if: steps.cache-toolchains.outputs.cache-hit != 'true'
