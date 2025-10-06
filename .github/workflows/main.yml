@@ -47,11 +47,8 @@ jobs:
      # BSP_BOARD_CAMERA_MODULE_FD_VERSION: "fd2.0"
      # BSP_KERNEL_VERSION: "kernel4.14"
      # BSP_BOARD_CAMERA_MODULE_DVFS: "sharkl3"
-      
-      # Mali Driver Specific Properties
-     # MALI_PLATFORM_NAME: "sharkl3"
-     # TARGET_BOARD_PLATFORM: "sharkl3"
-     # TARGET_BOARD: "sharkl3"
+
+     BSP_SYSTEM_VERSION: "sharkl3"
 
     steps:
       - name: Checkout repository
@@ -169,17 +166,22 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
-          sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
-          sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
+          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135:NONE
+          focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
+          microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
-          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135:NONE    
           sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
-          sprd_fd:drivers/modules/kernel_modules/camera/fd:NONE
-          tcs3430:drivers/kernel_modules/kernel4.14/input/misc/tcs3430:NONE
-          microarray_fp:drivers/kernel_modules/kernel4.14/input/fingerprint/microarray:NONE     
-          sprdbt_tty:drivers/kernel_modules/kernel4.14/wcn/bluetooth/driver:NONE
-          sprd_fm:drivers/kernel_modules/kernel4.14/wcn/fm/driver:NONE
-          sprdwl_ng:drivers/kernel_modules/kernel4.14/wcn/wlan:NONE
+          sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
+          sprd_fm:drivers/kernel_modules/wcn/fm/driver:NONE
+          sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
+          sprdbt_tty:drivers/kernel_modules/wcn/bluetooth/driver:NONE
+          sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
+          sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
+          tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
+               
+          
+          
+          
           "
           export KBUILD_EXTRA_SYMBOLS=""
 
