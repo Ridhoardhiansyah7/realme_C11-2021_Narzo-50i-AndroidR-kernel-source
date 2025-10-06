@@ -169,18 +169,18 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
-          sprd_flash_drv:drivers/modules/common/camera/flash/flash_drv:NONE
-          sprd_sensor:drivers/modules/common/camera/sensor:NONE
-          sprd_camera:drivers/modules/common/camera/core:NONE
-          flash_ic_ocp8132:drivers/modules/common/camera/flash/ocp8132:NONE
-          flash_ic_ocp8137:drivers/modules/common/camera/flash/ocp8137:NONE
-          flash_ic_sc2703:drivers/modules/common/camera/flash/sc2703s:NONE
-          sprd_cpp:drivers/modules/common/camera/cpp:NONE
-          sprd_fd:drivers/modules/common/camera/fd:NONE
-          mmdvfs:drivers/modules/common/camera/mmdvfs:NONE
-          mali_gondul:drivers/modules/kernel4.14/gpu/gondul:NONE
+          sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
+          sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
+          sprd_camera:drivers/kernel_modules/common/camera/core:NONE
+          flash_ic_ocp8132:drivers/kernel_modules/common/camera/flash/ocp8132:NONE
+          flash_ic_ocp8137:drivers/kernel_modules/common/camera/flash/ocp8137:NONE
+          flash_ic_sc2703:drivers/kernel_modules/common/camera/flash/sc2703s:NONE
+          sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
+          sprd_fd:drivers/modules/kernel_modules/camera/fd:NONE
+          mmdvfs:drivers/modules/kernel_modules/camera/mmdvfs:NONE
+          mali_gondul:drivers/kernel_modules/kernel4.14/gpu/gondul:NONE
           stmvl53l0:drivers/modules/kernel4.14/input/misc/vl53L0:NONE
-          tcs3430:drivers/modules/kernel4.14/input/misc/tcs3430:NONE
+          tcs3430:drivers/kernel_modules/kernel4.14/input/misc/tcs3430:NONE
           microarray_fp:drivers/modules/kernel4.14/input/fingerprint/microarray:NONE
           synaptics_dsx_td4310:drivers/modules/kernel4.14/input/touchscreen/synaptics_dsx_td4310:NONE
           ssd20xx_ts:drivers/modules/kernel4.14/input/touchscreen/ssl_ssd20xx:NONE
