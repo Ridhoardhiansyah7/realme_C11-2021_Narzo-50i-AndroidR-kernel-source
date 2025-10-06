@@ -36,22 +36,22 @@ jobs:
       BSP_BUILD_DT_OVERLAY: "y"
       BSP_BUILD_ANDROID_OS: "y"
       BSP_BUILD_FAMILY: "sharkl3"
-      BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
-      BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r3p0"
-      BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION: "sharkl3"
+      # BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
+     # BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r3p0"
+     # BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION: "sharkl3"
       BSP_BOARD_NAME: "sharkl3"
-      BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE: "Cadence"
+     # BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE: "Cadence"
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
       BSP_BOARD_WLAN_DEVICE: "sc2332"
-      BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r6p0"
-      BSP_BOARD_CAMERA_MODULE_FD_VERSION: "fd2.0"
-      BSP_KERNEL_VERSION: "kernel4.14"
-      BSP_BOARD_CAMERA_MODULE_DVFS: "sharkl3"
+     # BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r6p0"
+     # BSP_BOARD_CAMERA_MODULE_FD_VERSION: "fd2.0"
+     # BSP_KERNEL_VERSION: "kernel4.14"
+     # BSP_BOARD_CAMERA_MODULE_DVFS: "sharkl3"
       
       # Mali Driver Specific Properties
-      MALI_PLATFORM_NAME: "sharkl3"
-      TARGET_BOARD_PLATFORM: "sharkl3"
-      TARGET_BOARD: "sharkl3"
+     # MALI_PLATFORM_NAME: "sharkl3"
+     # TARGET_BOARD_PLATFORM: "sharkl3"
+     # TARGET_BOARD: "sharkl3"
 
     steps:
       - name: Checkout repository
