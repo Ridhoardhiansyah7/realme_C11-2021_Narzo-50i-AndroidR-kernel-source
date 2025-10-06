@@ -12,7 +12,7 @@ jobs:
 
     env:
       OBJ_DIR: ${{ github.workspace }}/out
-      CONFIG: rmx3235_defconfig
+      CONFIG: RMX3235_defconfig
       ARCH: arm64
       ENABLE_CCACHE: "true" # Define and enable ccache
 
