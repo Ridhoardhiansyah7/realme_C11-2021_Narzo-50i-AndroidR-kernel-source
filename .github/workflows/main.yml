@@ -227,25 +227,18 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
-          sprd_flash_drv:drivers/modules/common/camera/flash/flash_drv
-          sprd_sensor:drivers/modules/common/camera/sensor
-          sprd_camera:drivers/modules/common/camera/core
-          flash_ic_ocp8132:drivers/modules/common/camera/flash/ocp8132
-          flash_ic_ocp8137:drivers/modules/common/camera/flash/ocp8137
-          flash_ic_sc2703:drivers/modules/common/camera/flash/sc2703s
-          sprd_cpp:drivers/modules/common/camera/cpp
-          sprd_fd:drivers/modules/common/camera/fd
-          mmdvfs:drivers/modules/common/camera/mmdvfs
-          mali_gondul:drivers/modules/kernel4.14/gpu/gondul
-          stmvl53l0:drivers/modules/kernel4.14/input/misc/vl53L0
-          tcs3430:drivers/modules/kernel4.14/input/misc/tcs3430
-          microarray_fp:drivers/modules/kernel4.14/input/fingerprint/microarray
-          synaptics_dsx_td4310:drivers/modules/kernel4.14/input/touchscreen/synaptics_dsx_td4310
-          ssd20xx_ts:drivers/modules/kernel4.14/input/touchscreen/ssl_ssd20xx
-          sprd_vdsp:drivers/modules/kernel4.14/npu/vdsp
-          sprdbt_tty:drivers/modules/kernel4.14/wcn/bluetooth/driver
-          sprd_fm:drivers/modules/kernel4.14/wcn/fm/driver
-          sprdwl_ng:drivers/modules/kernel4.14/wcn/wlan
+          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135:NONE
+          focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
+          microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
+          sprd_camera:drivers/kernel_modules/common/camera/core:NONE
+          sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
+          sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
+          sprd_fm:drivers/kernel_modules/wcn/fm/driver:NONE
+          sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
+          sprdbt_tty:drivers/kernel_modules/wcn/bluetooth/driver:NONE
+          sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
+          sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
+          tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
           "
           for module_info in $MODULE_LIST; do
             KO_NAME=$(echo "$module_info" | cut -d':' -f1)
