@@ -1,0 +1,209 @@
+name: Tes
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    env:
+      OBJ_DIR: ${{ github.workspace }}/out
+      CONFIG: rmx3235_defconfig
+      ARCH: arm64
+      ENABLE_CCACHE: "true" # Define and enable ccache
+
+      # Clang
+      CLANG_REPO:  https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6573524.git
+      CLANG_BRANCH: "10.0"
+      CC: clang
+      CLANG_TRIPLE: aarch64-linux-gnu-
+
+      # GCC prebuilts
+      GCC_BRANCH:     "lineage-19.1"
+      GCC_AARCH64_REPO: https://github.com/rifsxd/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9
+      GCC_ARM_REPO:     https://github.com/rifsxd/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9
+
+      # Cross-compilers
+      CROSS_COMPILE:        aarch64-linux-android-
+      CROSS_COMPILE_ARM32:  arm-linux-androideabi-
+
+      # LLVM tools
+      LD:        ld.lld
+      AR:        llvm-ar
+      NM:        llvm-nm
+      AS:        llvm-as         # Added for explicitness
+      OBJCOPY:   llvm-objcopy
+      OBJDUMP:   llvm-objdump
+      READELF:   llvm-readelf
+      OBJSIZE:   llvm-size
+      STRIP:     llvm-strip
+      LDGOLD:    aarch64-linux-gnu-ld.gold # Removed, LD=ld.lld is primary
+      LLVM_AR:   llvm-ar
+      LLVM_DIS:  llvm-dis
+
+      # --- Crucial for DTB/DTBO selection for rmx3235 (sharkl3) ---
+      BSP_BUILD_DT_OVERLAY: "y"
+      BSP_BUILD_ANDROID_OS: "y"
+      BSP_BUILD_FAMILY: "sharkl3"
+      # --------------------------------------------------------------
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install deps + ccache
+        run: |
+          set -e
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bc build-essential libncurses-dev git curl ccache \
+            libyaml-dev pkg-config
+
+      - name: Clone Clang toolchain
+        run: |
+          set -e
+          git clone --depth=1 --branch ${CLANG_BRANCH} ${CLANG_REPO} clang
+          echo "${{ github.workspace }}/clang/bin" >> $GITHUB_PATH
+
+      - name: Clone GCC aarch64 toolchain
+        run: |
+          set -e
+          git clone --depth=1 --branch ${GCC_BRANCH} ${GCC_AARCH64_REPO} gcc-aarch64
+          echo "${{ github.workspace }}/gcc-aarch64/bin" >> $GITHUB_PATH
+
+      - name: Clone GCC arm toolchain
+        run: |
+          set -e
+          git clone --depth=1 --branch ${GCC_BRANCH} ${GCC_ARM_REPO} gcc-arm
+          echo "${{ github.workspace }}/gcc-arm/bin" >> $GITHUB_PATH
+
+      - name: Generate defconfig
+        run: |
+          set -e
+          # Explicitly use clang/lld for host tools during defconfig for robustness
+          export HOSTCC=clang
+          export HOSTLD=ld.lld
+
+          export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH}"
+          YAML_HOST_LIBS="$(pkg-config --libs yaml-0.1 2>/dev/null || echo "-lyaml")"
+          # Use HOSTLDFLAGS (no underscore) for consistency with make variables
+          export CURRENT_HOST_LDFLAGS="${HOSTLDFLAGS:-} ${YAML_HOST_LIBS}"
+
+          make -s O=${OBJ_DIR} ARCH=${ARCH} ${CONFIG} \
+            HOSTCC="${HOSTCC}" \
+            HOSTLD="${HOSTLD}" \
+            HOSTLDFLAGS="${CURRENT_HOST_LDFLAGS}" \
+            -j1
+
+      - name: Compile kernel
+        run: |
+          set -e
+          if [ "${ENABLE_CCACHE}" = "true" ]; then
+            export CC_FOR_MAKE="ccache ${CC}"
+            echo "CCACHE enabled: CC_FOR_MAKE is ${CC_FOR_MAKE}"
+            ccache -s # Print ccache stats
+          else
+            export CC_FOR_MAKE="${CC}"
+            echo "CCACHE disabled: CC_FOR_MAKE is ${CC_FOR_MAKE}"
+          fi
+
+          # Ensure HOSTCC, HOSTLD are using the cloned clang.
+          # Already exported in defconfig step, but re-affirming for this scope is safe.
+          export HOSTCC=clang
+          export HOSTLD=ld.lld
+          # export HOSTAR=llvm-ar # Optional, if host tools need it
+
+          export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH}"
+          YAML_HOST_CFLAGS="$(pkg-config --cflags yaml-0.1 2>/dev/null || echo '')"
+          YAML_HOST_LIBS="$(pkg-config --libs yaml-0.1 2>/dev/null || echo "-lyaml")"
+
+          # Use HOSTCFLAGS and HOSTLDFLAGS (no underscore) for consistency
+          export CURRENT_HOST_CFLAGS="${HOSTCFLAGS:-} ${YAML_HOST_CFLAGS}"
+          export CURRENT_HOST_LDFLAGS="${HOSTLDFLAGS:-} ${YAML_HOST_LIBS}"
+
+          make O=${OBJ_DIR} ARCH=${ARCH} \
+            LLVM=1 \
+            BSP_BUILD_ANDROID_OS=${BSP_BUILD_ANDROID_OS} \
+            BSP_BUILD_FAMILY=${BSP_BUILD_FAMILY} \
+            BSP_BUILD_DT_OVERLAY=${BSP_BUILD_DT_OVERLAY} \
+            CC="${CC_FOR_MAKE}" \
+            AS=${AS} \
+            LD=${LD} \
+            AR=${AR} \
+            NM=${NM} \
+            OBJCOPY=${OBJCOPY} \
+            OBJDUMP=${OBJDUMP} \
+            READELF=${READELF} \
+            OBJSIZE=${OBJSIZE} \
+            STRIP=${STRIP} \
+            LLVM_AR=${LLVM_AR} \
+            LLVM_DIS=${LLVM_DIS} \
+            CLANG_TRIPLE=${CLANG_TRIPLE} \
+            CROSS_COMPILE=${CROSS_COMPILE} \
+            CROSS_COMPILE_ARM32=${CROSS_COMPILE_ARM32} \
+            LDGOLD=${LDGOLD} \
+            HOSTCC="${HOSTCC}" \
+            HOSTLD="${HOSTLD}" \
+            HOSTCFLAGS="${CURRENT_HOST_CFLAGS}" \
+            HOSTLDFLAGS="${CURRENT_HOST_LDFLAGS}" \
+            -j2 # Use nproc for parallel jobs
+
+      - name: Report result and Prepare for Upload
+        id: report_and_prepare
+        run: |
+          set -e
+          KERNEL_IMAGE_PATH=""
+          DTBO_IMAGE_PATH="${OBJ_DIR}/arch/${ARCH}/boot/dtbo.img"
+          FINAL_KERNEL_NAME="Image"
+
+          if [ -f "${OBJ_DIR}/arch/${ARCH}/boot/Image" ]; then
+            echo "✅ Kernel built successfully: Image"
+            KERNEL_IMAGE_PATH="${OBJ_DIR}/arch/${ARCH}/boot/Image"
+            FINAL_KERNEL_NAME="Image"
+          elif [ -f "${OBJ_DIR}/arch/${ARCH}/boot/Image.gz" ]; then
+            echo "✅ Kernel built successfully: Image.gz"
+            KERNEL_IMAGE_PATH="${OBJ_DIR}/arch/${ARCH}/boot/Image.gz"
+            FINAL_KERNEL_NAME="Image.gz"
+          else
+            echo "❌ Build failed: Kernel Image or Image.gz not found in ${OBJ_DIR}/arch/${ARCH}/boot/" >&2
+            echo "Listing contents of ${OBJ_DIR} (especially arch/${ARCH}/boot/):"
+            ls -lR "${OBJ_DIR}"
+            exit 1
+          fi
+          echo "Kernel image found at: ${KERNEL_IMAGE_PATH}"
+          echo "kernel_image_name=${FINAL_KERNEL_NAME}" >> $GITHUB_OUTPUT
+          echo "kernel_image_path=${KERNEL_IMAGE_PATH}" >> $GITHUB_OUTPUT
+
+          if [ -f "${DTBO_IMAGE_PATH}" ]; then
+            echo "✅ DTBO image found: dtbo.img"
+            echo "dtbo_image_name=dtbo.img" >> $GITHUB_OUTPUT
+            echo "dtbo_image_path=${DTBO_IMAGE_PATH}" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️ DTBO image (dtbo.img) not found at ${DTBO_IMAGE_PATH}. This might be okay if not expected for this config."
+            echo "dtbo_image_name=" >> $GITHUB_OUTPUT
+            echo "dtbo_image_path=" >> $GITHUB_OUTPUT
+          fi
+
+          echo "Contents of ${OBJ_DIR}/arch/${ARCH}/boot/:"
+          ls -lh "${OBJ_DIR}/arch/${ARCH}/boot/"
+
+      - name: Upload Kernel Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-image-${{ steps.report_and_prepare.outputs.kernel_image_name }}-${{ github.run_id }}
+          path: ${{ steps.report_and_prepare.outputs.kernel_image_path }}
+          if-no-files-found: error
+
+      - name: Upload DTBO Image (if found)
+        if: steps.report_and_prepare.outputs.dtbo_image_name != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: dtbo-image-${{ steps.report_and_prepare.outputs.dtbo_image_name }}-${{ github.run_id }}
+          path: ${{ steps.report_and_prepare.outputs.dtbo_image_path }}
+          if-no-files-found: error # Should not fail due to 'if' but good for safety
