@@ -209,8 +209,18 @@ jobs:
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
               
-              if [ "$KO_NAME" = "mali_gondul" ]; then
-                MAKE_CMD="$MAKE_CMD MALI_PLATFORM_NAME=\"${{ env.MALI_PLATFORM_NAME }}\" TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" TARGET_BOARD=\"${{ env.TARGET_BOARD }}\""
+              if [ "$KO_NAME" = "pvrsrvkm" ]; then
+                echo "ARCH=arm64" >> $GITHUB_ENV
+                echo "CROSS_COMPILE=aarch64-linux-android-" >> $GITHUB_ENV
+                echo "KERNELDIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+                echo "DISCIMAGE=/" >> $GITHUB_ENV
+                echo "BUILD=release" >> $GITHUB_ENV
+                ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
+   
+                MAKE_CMD="make -C \"$ROGUE_PATH/build/linux\" BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE"
+
+               echo "[INFO]: Building Rogue DDK kernel module..."
+               eval $MAKE_CMD
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
