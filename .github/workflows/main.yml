@@ -178,7 +178,7 @@ jobs:
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
-          sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
+          sprd_cpp:drivers/modules/kernel_modules/common/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
           sprd_fm:drivers/kernel_modules/wcn/fm/driver:NONE
           sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
@@ -244,7 +244,7 @@ jobs:
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
-          sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
+          sprd_cpp:drivers/modules/kernel_modules/common/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
           sprd_fm:drivers/kernel_modules/wcn/fm/driver:NONE
           sprd_sensor:drivers/kernel_modules/common/camera/sensor:NONE
