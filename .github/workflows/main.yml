@@ -166,9 +166,11 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
-          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135:NONE
+          chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
+          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
           sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
@@ -231,9 +233,11 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
-          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135:NONE
+          chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
+          flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
           sprd_cpp:drivers/modules/kernel_modules/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
