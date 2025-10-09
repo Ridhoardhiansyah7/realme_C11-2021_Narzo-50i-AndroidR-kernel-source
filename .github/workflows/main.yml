@@ -213,18 +213,6 @@ jobs:
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                 echo "[INFO]: Building Rogue DDK kernel module..."
   
-                ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
-  
-                # Set environment for the GPU build
-                export BUILD=release
-                export KERNELDIR="${{ github.workspace }}/out"
-                export DISCIMAGE="${{ github.workspace }}/out"
-                export ARCH=arm64
-                export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
-
-                cd "${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
-                make BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE
- 
                 fi
               
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
