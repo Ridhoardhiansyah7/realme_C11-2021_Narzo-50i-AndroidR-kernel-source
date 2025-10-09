@@ -110,7 +110,7 @@ jobs:
           chmod +x ${{ env.GCC_64_BASE }}/bin/*
 
      - name: Setup Android NDK
-        run: |
+       run: |
           echo "[INFO]: Setting up Android NDK..."
           mkdir -p /usr/local/android-ndk
           wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
