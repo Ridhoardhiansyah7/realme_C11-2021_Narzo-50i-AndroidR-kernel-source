@@ -214,7 +214,7 @@ jobs:
                 echo "ARCH=arm64" >> $GITHUB_ENV
                 echo "CROSS_COMPILE=aarch64-linux-android-" >> $GITHUB_ENV
                 echo "KERNELDIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-                echo "DISCIMAGE=/" >> $GITHUB_ENV
+                echo "DISCIMAGE=${{ github.workspace }}" >> $GITHUB_ENV
                 echo "BUILD=release" >> $GITHUB_ENV
                 ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
    
