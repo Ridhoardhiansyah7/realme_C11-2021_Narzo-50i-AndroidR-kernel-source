@@ -209,21 +209,24 @@ jobs:
                 BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE=\"${{ env.BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE }}\" BSP_BOARD_UNISOC_WCN_SOCKET=\"${{ env.BSP_BOARD_UNISOC_WCN_SOCKET }}\" \
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
-              
+
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                 echo "[INFO]: Building Rogue DDK kernel module..."
-                echo "ARCH=arm64" >> $GITHUB_ENV
-                echo "CROSS_COMPILE=aarch64-linux-android-" >> $GITHUB_ENV
-                echo "KERNELDIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-                echo "DISCIMAGE=${{ github.workspace }}" >> $GITHUB_ENV
-                echo "BUILD=release" >> $GITHUB_ENV
+  
                 ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
-   
-                
-                MAKE_CMD="make BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE \ ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE \ INSTALL_MOD_PATH="${{ github.workspace }}/modules_out \ modules_install"
-              eval $MAKE_CMD
-              fi
+  
+                # Set environment for the GPU build
+                export BUILD=release
+                export KERNELDIR="${{ github.workspace }}/out"
+                export DISCIMAGE="${{ github.workspace }}/out"
+                export ARCH=arm64
+                export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
 
+                cd "${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
+                make BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE
+ 
+                fi
+              
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
                 MAKE_CMD="$MAKE_CMD KBUILD_EXTRA_SYMBOLS=\"$KBUILD_EXTRA_SYMBOLS\""
               fi
