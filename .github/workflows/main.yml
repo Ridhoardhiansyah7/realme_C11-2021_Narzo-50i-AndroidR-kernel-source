@@ -35,12 +35,20 @@ jobs:
       
       # UNISOC Board-Specific Properties (used by (.ko) Makefiles)
       # Android Build
+      BSP_BOARD_ARCH: arm64
       BSP_BUILD_DT_OVERLAY: "y"
       BSP_BUILD_ANDROID_OS: "y"
       BSP_BUILD_FAMILY: "sharkl3"
       BSP_BOARD_NAME: "sharkl3"
       BSP_KERNEL_VERSION: "kernel4.14"
+      
+      # PowerVR
       BSP_SYSTEM_VERSION: "sharkl3"
+      BSP_PRODUCT_NAME: "sharkl3"
+      BSP_ROOT_DIR: ${{ github.workspace }}
+      BSP_OUT_PLATFORM: ${{ github.workspace }}/out
+      BSP_KERNEL_OUT: ${{ github.workspace }}/out/kernel
+      
 
       # Wlan
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
