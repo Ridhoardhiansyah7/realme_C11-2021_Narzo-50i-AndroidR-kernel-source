@@ -108,15 +108,15 @@ jobs:
           echo "--> Setting permissions..."
           chmod +x ${{ env.CLANG_BASE }}/bin/*
           chmod +x ${{ env.GCC_64_BASE }}/bin/*
-
-     - name: Setup Android NDK
-       run: |
-          echo "[INFO]: Setting up Android NDK..."
-          mkdir -p /usr/local/android-ndk
-          wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-          unzip -q android-ndk-r21e-linux-x86_64.zip -d /usr/local/android-ndk
-          mkdir -p /usr/local/android-ndk/android-ndk-r21e/platforms/android-30/arch-arm64/usr/include
-          echo "NDK_PLATFORMS_ROOT=/usr/local/android-ndk/android-ndk-r21e/platforms" >> $GITHUB_ENV
+ 
+      - name: Setup Android NDK
+        run: |
+           echo "[INFO]: Setting up Android NDK..."
+           mkdir -p /usr/local/android-ndk
+           wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+           unzip -q android-ndk-r21e-linux-x86_64.zip -d /usr/local/android-ndk
+           mkdir -p /usr/local/android-ndk/android-ndk-r21e/platforms/android-30/arch-arm64/usr/include
+           echo "NDK_PLATFORMS_ROOT=/usr/local/android-ndk/android-ndk-r21e/platforms" >> $GITHUB_ENV
 
       - name: Set up PATH and ccache
         run: |
@@ -221,7 +221,6 @@ jobs:
 
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                 echo "[INFO]: Building Rogue DDK kernel module..."
-  
                 fi
               
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
