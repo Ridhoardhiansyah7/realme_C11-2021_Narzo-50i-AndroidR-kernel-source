@@ -229,11 +229,11 @@ jobs:
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                 echo "[INFO]: Building Rogue DDK kernel module..."
                 MAKE_CMD="$MAKE_CMD \
-  BSP_SYSTEM_VERSION='${{ env.BSP_SYSTEM_VERSION }}' \
-  BSP_PRODUCT_NAME='${{ env.BSP_PRODUCT_NAME }}' \
-  BSP_ROOT_DIR='${{ env.BSP_ROOT_DIR }}' \
-  BSP_OUT_PLATFORM='${{ env.BSP_OUT_PLATFORM }}' \
-  BSP_KERNEL_OUT='${{ env.BSP_KERNEL_OUT }}'"
+                  BSP_SYSTEM_VERSION='${{ env.BSP_SYSTEM_VERSION }}' \
+                  BSP_PRODUCT_NAME='${{ env.BSP_PRODUCT_NAME }}' \
+                  BSP_ROOT_DIR='${{ env.BSP_ROOT_DIR }}' \
+                  BSP_OUT_PLATFORM='${{ env.BSP_OUT_PLATFORM }}' \
+                  BSP_KERNEL_OUT='${{ env.BSP_KERNEL_OUT }}'"
                 fi
               
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
