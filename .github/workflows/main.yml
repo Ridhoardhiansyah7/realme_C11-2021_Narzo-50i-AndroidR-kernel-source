@@ -109,6 +109,22 @@ jobs:
           chmod +x ${{ env.CLANG_BASE }}/bin/*
           chmod +x ${{ env.GCC_64_BASE }}/bin/*
 
+      - name: Setup Android NDK
+        run: |
+          echo "[INFO]: Setting up Android NDK..."
+          mkdir -p /usr/local/android-ndk
+          wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+          unzip -q android-ndk-r21e-linux-x86_64.zip -d /usr/local/android-ndk
+          echo "NDK_PLATFORMS_ROOT=/usr/local/android-ndk/android-ndk-r21e/platforms" >> $GITHUB_ENV
+
+      - name: Setup Android NDK
+        run: |
+          echo "[INFO]: Setting up Android NDK..."
+          mkdir -p /usr/local/android-ndk
+          wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+         unzip -q android-ndk-r21e-linux-x86_64.zip -d /usr/local/android-ndk
+        export NDK_PLATFORMS_ROOT="/usr/local/.android-ndk/android-ndk-r21e/platforms"
+
       - name: Set up PATH and ccache
         run: |
           echo "${{ env.CLANG_BASE }}/bin" >> $GITHUB_PATH
@@ -237,6 +253,7 @@ jobs:
         run: |
           echo "[INFO]: Installing all out-of-tree modules..."
           
+          export NDK_PLATFORMS_ROOT="/usr/local/android-ndk/android-ndk-r21e/platforms"
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
