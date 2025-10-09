@@ -218,7 +218,7 @@ jobs:
                 echo "BUILD=release" >> $GITHUB_ENV
                 ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
    
-                MAKE_CMD="make -C \"$ROGUE_PATH/build/linux\" BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE"
+                MAKE_CMD="make -C \"$ROGUE_PATH\" BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE"
 
                echo "[INFO]: Building Rogue DDK kernel module..."
                eval $MAKE_CMD
