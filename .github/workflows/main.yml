@@ -45,9 +45,9 @@ jobs:
       # PowerVR
       BSP_SYSTEM_VERSION: "sharkl3"
       BSP_PRODUCT_NAME: "sharkl3"
-      BSP_ROOT_DIR: ${{ github.workspace }}
-      BSP_OUT_PLATFORM: ${{ github.workspace }}/out
-      BSP_KERNEL_OUT: ${{ github.workspace }}/out/kernel
+      BSP_ROOT_DIR: "${{ github.workspace }}"
+      BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
+      BSP_KERNEL_OUT: "${{ github.workspace }}/out/kernel"
       
 
       # Wlan
