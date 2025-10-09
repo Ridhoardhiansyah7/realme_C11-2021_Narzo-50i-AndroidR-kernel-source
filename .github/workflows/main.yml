@@ -220,7 +220,7 @@ jobs:
                 ROGUE_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android"
    
                 
-                MAKE_CMD="make BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE \ ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE \ INSTALL_MOD_PATH="${{ github.workspace }}/modules_out" \ modules_install
+                MAKE_CMD="make BUILD=$BUILD KERNELDIR=$KERNELDIR DISCIMAGE=$DISCIMAGE \ ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE \ INSTALL_MOD_PATH="${{ github.workspace }}/modules_out \ modules_install"
               eval $MAKE_CMD
               fi
 
