@@ -45,9 +45,9 @@ jobs:
       # PowerVR
       BSP_SYSTEM_VERSION: "sharkl3"
       BSP_PRODUCT_NAME: "sharkl3"
-      BSP_ROOT_DIR: "${{ github.workspace }}"
-      BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
-      BSP_KERNEL_OUT: "${{ github.workspace }}/out/kernel"
+      #BSP_ROOT_DIR: "${{ github.workspace }}"
+      #BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
+      #BSP_KERNEL_OUT: "${{ github.workspace }}/out/kernel"
       
       # Wlan
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
@@ -193,7 +193,6 @@ jobs:
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
           sprd_cpp:drivers/kernel_modules/common/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
@@ -266,7 +265,6 @@ jobs:
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
           microarray_fp:drivers/kernel_modules/input/fingerprint/microarray:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           sprd_camera:drivers/kernel_modules/common/camera/core:NONE
           sprd_cpp:drivers/kernel_modules/common/camera/cpp:NONE
           sprd_flash_drv:drivers/kernel_modules/common/camera/flash/flash_drv:NONE
