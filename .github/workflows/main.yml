@@ -184,10 +184,7 @@ jobs:
       - name: Build Out-of-Tree Modules
         run: |
           echo "[INFO]: Building all out-of-tree modules..."
-          
-          export BSP_KERNEL_PATH="${{ github.workspace }}/out"
-          export BSP_MODULES_OUT="${{ github.workspace }}/out"
-          
+         
           MODULE_LIST="
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
