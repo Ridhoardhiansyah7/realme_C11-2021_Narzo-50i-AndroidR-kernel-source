@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       defconfig:
-        description: 'Kernel defconfig name'
+        description: 'Kernel defconfig name (e.g., rmx3263_defconfig)'
         required: true
-        default: 'RMX3235_defconfig'
+        default: RMX3235_defconfig'
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
       CC: "ccache clang"
       CROSS_COMPILE: "${{ github.workspace }}/toolchains/gcc-14.3/bin/aarch64-none-linux-gnu-"
       CROSS_COMPILE_ARM32: "${{ github.workspace }}/toolchains/gcc-14.3/bin/arm-none-linux-gnueabihf-"
-      
+
       # UNISOC Board-Specific Properties (used by (.ko) Makefiles)
       # Android Build
       BSP_BOARD_ARCH: arm64
@@ -41,14 +41,14 @@ jobs:
       BSP_BUILD_FAMILY: "sharkl3"
       BSP_BOARD_NAME: "sharkl3"
       BSP_KERNEL_VERSION: "kernel4.14"
-      
+
       # PowerVR
       BSP_SYSTEM_VERSION: "sharkl3"
       BSP_PRODUCT_NAME: "sharkl3"
       #BSP_ROOT_DIR: "${{ github.workspace }}"
       #BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
       #BSP_KERNEL_OUT: "${{ github.workspace }}/out/kernel"
-      
+
       # Wlan
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
       BSP_BOARD_WLAN_DEVICE: "sc2332"
@@ -92,9 +92,9 @@ jobs:
           echo "[INFO]: Installing system requirements..."
           sudo apt-get update
           sudo apt-get install -y --fix-missing \
-           git device-tree-compiler lz4 xz-utils zlib1g-dev zip make gcc g++ \
-           python3 python-is-python3 libncurses-dev flex bison gperf libssl-dev \
-           libelf-dev kmod pahole zstd pkg-config build-essential ccache
+            git device-tree-compiler lz4 xz-utils zlib1g-dev zip make gcc g++ \
+            python3 python-is-python3 libncurses-dev flex bison gperf libssl-dev \
+            libelf-dev kmod pahole zstd libyaml-dev ccache
 
       - name: Download and Set up Toolchains
         if: steps.cache-toolchains.outputs.cache-hit != 'true'
@@ -115,7 +115,7 @@ jobs:
           echo "--> Setting permissions..."
           chmod +x ${{ env.CLANG_BASE }}/bin/*
           chmod +x ${{ env.GCC_64_BASE }}/bin/*
- 
+
       - name: Set up PATH and ccache
         run: |
           echo "${{ env.CLANG_BASE }}/bin" >> $GITHUB_PATH
@@ -129,12 +129,6 @@ jobs:
         run: |
           echo -e "\n[INFO]: KERNEL BUILD STARTED..!\n"
           
-          export KBUILD_BUILD_HOST="$(. /etc/os-release && echo ${NAME}-${VERSION_ID})"
-          export KBUILD_BUILD_TIMESTAMP="$(date '+%a %b %d %T WIB %Y')"
-        
-          sed -i '/yamltree.o/d' scripts/dtc/Makefile
-          sed -i '/dt_to_yaml/d' scripts/dtc/dtc.c
-
           make -C "${{ github.workspace }}" O="${{ github.workspace }}/out" ARCH=${{ env.ARCH }} ${{ inputs.defconfig }} || exit 1
             
           make -C "${{ github.workspace }}" \
@@ -149,7 +143,6 @@ jobs:
             NM="llvm-nm" \
             OBJCOPY="llvm-objcopy" \
             OBJDUMP="llvm-objdump" \
-            DTC_NO_YAML=1 \
             STRIP="llvm-strip" \
             CROSS_COMPILE="${{ env.CROSS_COMPILE }}" \
             CROSS_COMPILE_ARM32="${{ env.CROSS_COMPILE_ARM32 }}" \
@@ -175,7 +168,10 @@ jobs:
       - name: Build Out-of-Tree Modules
         run: |
           echo "[INFO]: Building all out-of-tree modules..."
-         
+          
+          export BSP_KERNEL_PATH="${{ github.workspace }}/out"
+          export BSP_MODULES_OUT="${{ github.workspace }}/out"
+          
           MODULE_LIST="
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
@@ -212,6 +208,10 @@ jobs:
                 BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE=\"${{ env.BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE }}\" BSP_BOARD_UNISOC_WCN_SOCKET=\"${{ env.BSP_BOARD_UNISOC_WCN_SOCKET }}\" \
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
+              
+              if [ "$KO_NAME" = "mali_gondul" ]; then
+                MAKE_CMD="$MAKE_CMD MALI_PLATFORM_NAME=\"${{ env.MALI_PLATFORM_NAME }}\" TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" TARGET_BOARD=\"${{ env.TARGET_BOARD }}\""
+              fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
                 MAKE_CMD="$MAKE_CMD KBUILD_EXTRA_SYMBOLS=\"$KBUILD_EXTRA_SYMBOLS\""
@@ -234,7 +234,7 @@ jobs:
       - name: Install Out-of-Tree Modules and Generate Dependencies
         run: |
           echo "[INFO]: Installing all out-of-tree modules..."
-         
+          
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
