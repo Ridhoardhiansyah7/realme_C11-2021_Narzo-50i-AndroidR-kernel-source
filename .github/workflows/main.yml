@@ -18,7 +18,7 @@ jobs:
       KERNEL_ROOT: ${{ github.workspace }}
       ARCH: arm64
       TZ: Asia/Jakarta
-      KBUILD_BUILD_USER: '@Aflahal'
+      KBUILD_BUILD_USER: 'Ardhiansyah_Aflahal'
       # Ccache Flags
       USE_CCACHE: 1
       CCACHE_EXEC: /usr/bin/ccache
