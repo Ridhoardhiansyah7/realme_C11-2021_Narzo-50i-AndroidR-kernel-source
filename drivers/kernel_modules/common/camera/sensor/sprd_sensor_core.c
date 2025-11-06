@@ -27,8 +27,8 @@
 #include <linux/slab.h>
 #include <linux/sched.h>
 #include <video/sprd_mmsys_pw_domain.h>
-#include <linux/hardware_info.h>
-// #include <../../../../../bsp/kernel/kernel4.14/include/linux/hardware_info.h>
+#include <../../../../../bsp/kernel/kernel4.14/include/linux/hardware_info.h>
+// #include <linux/hardware_info.h>
 
 #include "csi_api.h"
 #ifdef CONFIG_COMPAT
