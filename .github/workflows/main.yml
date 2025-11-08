@@ -259,7 +259,7 @@ jobs:
 
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                KO_FILE="${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm/target_aarch64/kbuild/pvrsrvkm.ko"
-               DEST_MODULE_DIR="${{ github.workspace }}/modules_out/pvrsrvkm"
+               DEST_MODULE_DIR="${{ github.workspace }}/out/pvrsrvkm"
                mkdir -p "$DEST_MODULE_DIR"
                cp "$KO_FILE" "$DEST_MODULE_DIR/"
                echo "--> pvrsrvkm.ko copied to $DEST_MODULE_DIR"
