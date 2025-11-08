@@ -227,20 +227,19 @@ jobs:
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
 
-              if [ "$KO_NAME" = "pvrsrvkm" ]; then
-               MAKE_CMD="$MAKE_CMD \
-               PLATFORM_VERSION=\"${{ env.PLATFORM_VERSION }}\" \
-               PLATFORM_VERSION_CODENAME=\"${{ env.PLATFORM_VERSION_CODENAME }}\" \
-               TARGET_KERNEL_ARCH=\"${{ env.TARGET_KERNEL_ARCH }}\" \
-               TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" \
-               TARGET_BOARD=\"${{ env.TARGET_BOARD }}\" \
-               BSP_ROOT_DIR=\"${{ env.BSP_ROOT_DIR }}\" \
-               BSP_KERNEL_OUT=\"${{ env.BSP_KERNEL_OUT }}\" \
-               BSP_OUT_PLATFORM=\"${{ env.BSP_OUT_PLATFORM }}\" \
-               BSP_PRODUCT_NAME=\"${{ env.BSP_PRODUCT_NAME }}\" \
-               BSP_BOARD_ARCH=\"${{ env.BSP_BOARD_ARCH }}\" \
-               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\" \
-               EXTRA_CFLAGS=\"-Wno-error -w\""
+             if [ "$KO_NAME" = "pvrsrvkm" ]; then
+              echo "[INFO] Using Rogue DDK official build method for pvrsrvkm..."
+              cd "$DRIVER_PATH"
+
+              export KERNELDIR="${{ github.workspace }}/out"
+              export DISCIMAGE="${{ github.workspace }}/out"
+              export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
+              export EXTRA_CFLAGS="-Wno-error -Wno-cast-function-type -w"
+
+              make BUILD=release || make BUILD=debug
+
+              cd -
+              continue
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
