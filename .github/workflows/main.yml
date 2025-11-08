@@ -187,7 +187,7 @@ jobs:
    
           mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
 
-          mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-30/arch-arm64/usr/include"
+          mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-29/arch-arm64/usr/include"
           
           MODULE_LIST="
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
