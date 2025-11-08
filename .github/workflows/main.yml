@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       defconfig:
-        description: 'Kernel defconfig name (e.g., rmx3263_defconfig)'
+        description: 'Kernel defconfig name (e.g., RMX3235_defconfig)'
         required: true
         default: 'RMX3235_defconfig'
 
@@ -43,11 +43,17 @@ jobs:
       BSP_KERNEL_VERSION: "kernel4.14"
 
       # PowerVR
+      TARGET_KERNEL_ARCH: "arm64"
       BSP_SYSTEM_VERSION: "sharkl3"
       BSP_PRODUCT_NAME: "sharkl3"
-      #BSP_ROOT_DIR: "${{ github.workspace }}"
-      #BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
-      #BSP_KERNEL_OUT: "${{ github.workspace }}/out/kernel"
+      TARGET_BOARD: "sharkl3"
+      TARGET_BOARD_PLATFORM: "sharkl3"
+      PLATFORM_VERSION: "11"
+      PLATFORM_VERSION_CODENAME: "R"
+      BSP_ROOT_DIR: "${{ github.workspace }}"
+      BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
+      BSP_KERNEL_OUT: "${{ github.workspace }}/out"
+      BSP_MODULES_DIST: "${{ github.workspace }}/out/modules"
 
       # Wlan
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
@@ -177,6 +183,8 @@ jobs:
           
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
+   
+          mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
           
           MODULE_LIST="
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
@@ -192,6 +200,7 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue:NONE
           "
           export KBUILD_EXTRA_SYMBOLS=""
 
@@ -215,8 +224,19 @@ jobs:
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
               
-              if [ "$KO_NAME" = "mali_gondul" ]; then
-                MAKE_CMD="$MAKE_CMD MALI_PLATFORM_NAME=\"${{ env.MALI_PLATFORM_NAME }}\" TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" TARGET_BOARD=\"${{ env.TARGET_BOARD }}\""
+              if [ "$KO_NAME" = "pvrsrvkm" ]; then
+               MAKE_CMD="$MAKE_CMD \
+               PLATFORM_VERSION=\"${{ env.PLATFORM_VERSION }}\" \
+               PLATFORM_VERSION_CODENAME=\"${{ env.PLATFORM_VERSION_CODENAME }}\" \
+               TARGET_KERNEL_ARCH=\"${{ env.TARGET_KERNEL_ARCH }}\" \
+               TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" \
+               TARGET_BOARD=\"${{ env.TARGET_BOARD }}\" \
+               BSP_ROOT_DIR=\"${{ env.BSP_ROOT_DIR }}\" \
+               BSP_KERNEL_OUT=\"${{ env.BSP_KERNEL_OUT }}\" \
+               BSP_OUT_PLATFORM=\"${{ env.BSP_OUT_PLATFORM }}\" \
+               BSP_PRODUCT_NAME=\"${{ env.BSP_PRODUCT_NAME }}\" \
+               BSP_BOARD_ARCH=\"${{ env.BSP_BOARD_ARCH }}\" \
+               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\""
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
@@ -258,6 +278,7 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue:NONE
           "
           for module_info in $MODULE_LIST; do
             KO_NAME=$(echo "$module_info" | cut -d':' -f1)
