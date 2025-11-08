@@ -258,17 +258,14 @@ jobs:
               eval $MAKE_CMD
 
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
-               KO_FILE="$BSP_MODULES_OUT/$KO_NAME/arm64/kbuild/$KO_NAME.ko"
-               DEST_MODULE_DIR="${{ github.workspace }}/modules_out/$KO_NAME"
-               if [ -f "$KO_FILE" ]; then
-                mkdir -p "$DEST_MODULE_DIR"
-                cp "$KO_FILE" "$DEST_MODULE_DIR/"
-                echo "--> $KO_NAME.ko copied to $DEST_MODULE_DIR"
-               else
-               echo "::warning:: $KO_NAME.ko not found, copy skipped"
+               KO_FILE="${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm/target_aarch64/kbuild/pvrsrvkm.ko"
+               DEST_MODULE_DIR="${{ github.workspace }}/modules_out/pvrsrvkm"
+               mkdir -p "$DEST_MODULE_DIR"
+               cp "$KO_FILE" "$DEST_MODULE_DIR/"
+               echo "--> pvrsrvkm.ko copied to $DEST_MODULE_DIR"
                fi
-              fi
-              
+
+
               if [ -f "$BSP_MODULES_OUT/$KO_NAME/Module.symvers" ]; then
                 KBUILD_EXTRA_SYMBOLS="$KBUILD_EXTRA_SYMBOLS $BSP_MODULES_OUT/$KO_NAME/Module.symvers"
               fi
