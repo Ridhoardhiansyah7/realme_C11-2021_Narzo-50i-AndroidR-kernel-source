@@ -96,7 +96,4 @@ PDUMP_STREAMBUF_SIZE_MB := 10
 include ../config/core.mk
 include ../common/android/extra_config.mk
 
-# Disable strict function cast warning for kernel timer API compatibility
-ccflags-y += -Wno-error=cast-function-type
-
 
