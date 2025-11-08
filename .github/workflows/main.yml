@@ -244,7 +244,7 @@ jobs:
               BSP_OUT_PLATFORM=\"${{ env.BSP_OUT_PLATFORM }}\" \
               BSP_KERNEL_OUT=\"${{ env.BSP_KERNEL_OUT }}\" \
               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\" \
-               KCFLAGS=\"-Wno-error=cast-function-type -Wno-error=enum-conversion\""
+               KCFLAGS=\"-Wno-error=cast-function-type -Wno-error=enum-conversion -Wno-error=missing-field-initializers\""
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
