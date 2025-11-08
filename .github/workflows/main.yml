@@ -214,6 +214,10 @@ jobs:
 
             if [ -f "$DRIVER_PATH/Makefile" ]; then
               echo "--> Building $KO_NAME..."
+
+              export CROSS_COMPILE="/home/runner/work/realme_C11-2021_Narzo-50i-AndroidR-kernel-source/realme_C11-2021_Narzo-50i-AndroidR-kernel-source/toolchains/gcc-14.3/bin/aarch64-none-linux-gnu-"
+
+              export CROSS_COMPILE_ARM32="/home/runner/work/realme_C11-2021_Narzo-50i-AndroidR-kernel-source/realme_C11-2021_Narzo-50i-AndroidR-kernel-source/toolchains/gcc-14.3/bin/arm-none-linux-gnueabihf-"
               
               MAKE_CMD="make -C \"$DRIVER_PATH\" \
                 LLVM=1 LLVM_IAS=1 ARCH=\"${{ env.ARCH }}\" CC=\"${{ env.CC }}\" LD=\"ld.lld\" AR=\"llvm-ar\" NM=\"llvm-nm\" \
