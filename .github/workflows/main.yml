@@ -243,6 +243,7 @@ jobs:
                BSP_ROOT_DIR=\"${{ env.BSP_ROOT_DIR }}\" \
                BSP_OUT_PLATFORM=\"${{ env.BSP_OUT_PLATFORM }}\" \
                BSP_KERNEL_OUT=\"${{ env.BSP_KERNEL_OUT }}\""
+               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\""
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
