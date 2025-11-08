@@ -246,7 +246,8 @@ jobs:
               export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
               #export EXTRA_CFLAGS="-Wno-error -Wno-cast-function-type -w"
 
-              MAKE_CMD="make -C \"$DRIVER_PATH\" BUILD=release || make -C \"$DRIVER_PATH\" BUILD=debug"
+              
+              MAKE_CMD="$MAKE_CMD BUILD=debug"
 
               # Salin hasil .ko kalau ada
               find "${{ github.workspace }}" -name "pvrsrvkm.ko" -exec cp {} "${{ github.workspace }}/out/lib/modules/" \;
