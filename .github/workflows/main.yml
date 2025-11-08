@@ -227,36 +227,6 @@ jobs:
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
 
-             if [ "$KO_NAME" = "pvrsrvkm" ]; then
-              echo "[INFO] Using Rogue DDK official build method for pvrsrvkm..."
-
-              # Cari folder build/linux/sharkl3_android secara otomatis
-             DRIVER_PATH=$(find "${{ github.workspace }}" -type d -path "*/gpu/rogue/driver/build/linux/sharkl3_android" | head -n 1)
-
-             if [ -z "$DRIVER_PATH" ]; then
-              echo "[ERR] Folder build/linux/sharkl3_android not found!"
-              exit 1
-              fi
-
-              echo "[INFO] Found pvrsrvkm build directory: $DRIVER_PATH"
-              cd "$DRIVER_PATH" || { echo "[ERR] Failed to cd into $DRIVER_PATH"; exit 1; }
-
-              export KERNELDIR="${{ github.workspace }}/out"
-              export DISCIMAGE="${{ github.workspace }}/out"
-              export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
-              #export EXTRA_CFLAGS="-Wno-error -Wno-cast-function-type -w"
-
-              
-              MAKE_CMD="$MAKE_CMD BUILD=debug"
-
-              # Salin hasil .ko kalau ada
-              find "${{ github.workspace }}" -name "pvrsrvkm.ko" -exec cp {} "${{ github.workspace }}/out/lib/modules/" \;
-
-              cd -
-              continue
-              fi
-
-             
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
                 MAKE_CMD="$MAKE_CMD KBUILD_EXTRA_SYMBOLS=\"$KBUILD_EXTRA_SYMBOLS\""
               fi
