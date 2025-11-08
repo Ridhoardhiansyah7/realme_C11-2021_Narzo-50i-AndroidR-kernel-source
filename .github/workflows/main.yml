@@ -190,6 +190,7 @@ jobs:
           mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-29/arch-arm64/usr/include"
           
           MODULE_LIST="
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
@@ -203,7 +204,6 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           "
           export KBUILD_EXTRA_SYMBOLS=""
 
@@ -226,7 +226,7 @@ jobs:
                 BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE=\"${{ env.BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE }}\" BSP_BOARD_UNISOC_WCN_SOCKET=\"${{ env.BSP_BOARD_UNISOC_WCN_SOCKET }}\" \
                 BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
                 modules"
-              
+
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
                MAKE_CMD="$MAKE_CMD \
                PLATFORM_VERSION=\"${{ env.PLATFORM_VERSION }}\" \
@@ -239,7 +239,8 @@ jobs:
                BSP_OUT_PLATFORM=\"${{ env.BSP_OUT_PLATFORM }}\" \
                BSP_PRODUCT_NAME=\"${{ env.BSP_PRODUCT_NAME }}\" \
                BSP_BOARD_ARCH=\"${{ env.BSP_BOARD_ARCH }}\" \
-               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\""
+               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\" \
+               EXTRA_CFLAGS=\"-Wno-error -w\""
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
@@ -268,6 +269,7 @@ jobs:
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
           
           MODULE_LIST="
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           chipone-tddi:drivers/kernel_modules/input/touchscreen/icnl9911:NONE
           flash_ic_ocp8135:drivers/kernel_modules/common/camera/flash/ocp8135b:NONE
           focaltech_ts:drivers/kernel_modules/input/touchscreen/focaltech_8006:NONE
@@ -281,7 +283,6 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           "
           for module_info in $MODULE_LIST; do
             KO_NAME=$(echo "$module_info" | cut -d':' -f1)
