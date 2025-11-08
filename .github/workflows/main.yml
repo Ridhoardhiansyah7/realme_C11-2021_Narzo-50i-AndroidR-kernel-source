@@ -229,14 +229,19 @@ jobs:
 
              if [ "$KO_NAME" = "pvrsrvkm" ]; then
               echo "[INFO] Using Rogue DDK official build method for pvrsrvkm..."
-              cd "$DRIVER_PATH"
+  
+              DRIVER_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver"
+              cd "$DRIVER_PATH/build/linux/sharkl3_android" || { echo "[ERR] Folder not found"; exit 1; }
 
               export KERNELDIR="${{ github.workspace }}/out"
               export DISCIMAGE="${{ github.workspace }}/out"
               export CROSS_COMPILE="${{ env.CROSS_COMPILE }}"
-              export EXTRA_CFLAGS="-Wno-error -Wno-cast-function-type -w"
+              #export EXTRA_CFLAGS="-Wno-error -Wno-cast-function-type -w"
 
               make BUILD=release || make BUILD=debug
+
+              # copy hasil .ko ke out
+              find "$DRIVER_PATH" -name '*.ko' -exec cp {} "${{ github.workspace }}/out/lib/modules/" \;
 
               cd -
               continue
