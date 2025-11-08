@@ -297,20 +297,31 @@ jobs:
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
           "
+
           for module_info in $MODULE_LIST; do
             KO_NAME=$(echo "$module_info" | cut -d':' -f1)
             DRIVER_PATH="${{ github.workspace }}/$(echo "$module_info" | cut -d':' -f2)"
-            if [ -d "$BSP_MODULES_OUT/$KO_NAME" ]; then
-              make -C "${{ github.workspace }}/out" M="$BSP_MODULES_OUT/$KO_NAME" \
-                LLVM=1 \
-                ARCH="${{ env.ARCH }}" \
-                CC="${{ env.CC }}" \
-                LD="ld.lld" \
-                CROSS_COMPILE="${{ env.CROSS_COMPILE }}" \
-                CLANG_TRIPLE="aarch64-none-linux-gnu-" \
-                INSTALL_MOD_PATH="${{ github.workspace }}/modules_out" \
-                modules_install
-              echo "--> $KO_NAME driver installed."
+
+  
+            if [ "$KO_NAME" = "pvrsrvkm" ]; then
+             INSTALL_PATH="$DRIVER_PATH/target_aarch64/kbuild"
+            else
+             INSTALL_PATH="$BSP_MODULES_OUT/$KO_NAME"
+            fi
+
+            if [ -d "$INSTALL_PATH" ]; then
+             make -C "${{ github.workspace }}/out" M="$INSTALL_PATH" \
+             LLVM=1 \
+             ARCH="${{ env.ARCH }}" \
+             CC="${{ env.CC }}" \
+             LD="ld.lld" \
+             CROSS_COMPILE="${{ env.CROSS_COMPILE }}" \
+             CLANG_TRIPLE="aarch64-none-linux-gnu-" \
+             INSTALL_MOD_PATH="${{ github.workspace }}/modules_out" \
+             modules_install
+             echo "--> $KO_NAME driver installed."
+            else
+            echo "--> $KO_NAME install path not found, skipping."
             fi
           done
 
