@@ -245,6 +245,10 @@ jobs:
               BSP_KERNEL_OUT=\"${{ env.BSP_KERNEL_OUT }}\" \
               BSP_KERNEL_CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\" \
                KCFLAGS=\"-Wno-error=cast-function-type -Wno-error=enum-conversion -Wno-error=missing-field-initializers\""
+
+
+              PVR_OUT_DIR="${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm/target_aarch64/kbuild"
+              cp "$PVR_OUT_DIR/pvrsrvkm.ko" "${{ github.workspace }}/out/modules/" || true
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
