@@ -229,7 +229,7 @@ jobs:
                 modules"
 
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
-                MAKE_CMD="$MAKE_CMD " TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" TARGET_BOARD=\"${{ env.TARGET_BOARD }}\""
+                MAKE_CMD="$MAKE_CMD TARGET_BOARD_PLATFORM=\"${{ env.TARGET_BOARD_PLATFORM }}\" TARGET_BOARD=\"${{ env.TARGET_BOARD }}\""
               fi
 
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
