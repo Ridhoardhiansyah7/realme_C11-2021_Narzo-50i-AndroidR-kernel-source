@@ -54,7 +54,7 @@ jobs:
       BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
       BSP_KERNEL_OUT: "${{ github.workspace }}/out"
       BSP_MODULES_DIST: "${{ github.workspace }}/out/modules"
-      # NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
+      NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
 
       # Wlan
       BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
@@ -184,6 +184,10 @@ jobs:
           
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
+
+          mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
+
+          mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-29/arch-arm64/usr/include"
    
           MODULE_LIST="
           pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
