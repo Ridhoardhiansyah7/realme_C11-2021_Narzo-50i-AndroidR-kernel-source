@@ -229,9 +229,17 @@ jobs:
 
              if [ "$KO_NAME" = "pvrsrvkm" ]; then
               echo "[INFO] Using Rogue DDK official build method for pvrsrvkm..."
-  
-              DRIVER_PATH="${{ github.workspace }}/drivers/kernel_modules/gpu/rogue/driver"
-              cd "$DRIVER_PATH/build/linux/sharkl3_android" || { echo "[ERR] Folder not found"; exit 1; }
+
+              # Cari folder build/linux/sharkl3_android secara otomatis
+             DRIVER_PATH=$(find "${{ github.workspace }}" -type d -path "*/gpu/rogue/driver/build/linux/sharkl3_android" | head -n 1)
+
+             if [ -z "$DRIVER_PATH" ]; then
+              echo "[ERR] Folder build/linux/sharkl3_android not found!"
+              exit 1
+              fi
+
+              echo "[INFO] Found pvrsrvkm build directory: $DRIVER_PATH"
+              cd "$DRIVER_PATH" || { echo "[ERR] Failed to cd into $DRIVER_PATH"; exit 1; }
 
               export KERNELDIR="${{ github.workspace }}/out"
               export DISCIMAGE="${{ github.workspace }}/out"
@@ -240,13 +248,14 @@ jobs:
 
               make BUILD=release || make BUILD=debug
 
-              # copy hasil .ko ke out
-              find "$DRIVER_PATH" -name '*.ko' -exec cp {} "${{ github.workspace }}/out/lib/modules/" \;
+              # Salin hasil .ko kalau ada
+              find "${{ github.workspace }}" -name "pvrsrvkm.ko" -exec cp {} "${{ github.workspace }}/out/lib/modules/" \;
 
               cd -
               continue
               fi
 
+             
               if [ -n "$KBUILD_EXTRA_SYMBOLS" ]; then
                 MAKE_CMD="$MAKE_CMD KBUILD_EXTRA_SYMBOLS=\"$KBUILD_EXTRA_SYMBOLS\""
               fi
