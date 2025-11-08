@@ -200,7 +200,7 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           "
           export KBUILD_EXTRA_SYMBOLS=""
 
@@ -278,7 +278,7 @@ jobs:
           sprdwl_ng:drivers/kernel_modules/wcn/wlan:NONE    
           sunwave_sw9058g_fp:drivers/kernel_modules/input/fingerprint/sunwave_sw9058g:NONE
           tcs3430:drivers/kernel_modules/input/misc/tcs3430:NONE
-          pvrsrvkm:drivers/kernel_modules/gpu/rogue:NONE
+          pvrsrvkm:drivers/kernel_modules/gpu/rogue/driver/build/linux/sharkl3_android:NONE
           "
           for module_info in $MODULE_LIST; do
             KO_NAME=$(echo "$module_info" | cut -d':' -f1)
