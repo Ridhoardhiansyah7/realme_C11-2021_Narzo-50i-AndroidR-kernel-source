@@ -30,7 +30,7 @@ jobs:
 
       # Main Compiler and Cross-Compile Variables
       CC: "ccache clang"
-      CROSS_COMPILE: "${{ github.workspace }}/toolchains/gcc-14.3/bin/aarch64-none-linux-gnu-"
+      CROSS_COMPILE: "${{ github.workspace }}/toolchains/gcc-14.3/bin/aarch64-linux-gnu-"
       CROSS_COMPILE_ARM32: "${{ github.workspace }}/toolchains/gcc-14.3/bin/arm-none-linux-gnueabihf-"
 
       # UNISOC Board-Specific Properties (used by (.ko) Makefiles)
