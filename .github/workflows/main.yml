@@ -48,8 +48,10 @@ jobs:
       BSP_PRODUCT_NAME: "sharkl3"
       TARGET_BOARD: "sharkl3"
       TARGET_BOARD_PLATFORM: "sharkl3"
+      PLATFORM_RELEASE: "11"
       PLATFORM_VERSION: "11"
       PLATFORM_VERSION_CODENAME: "R"
+      PLATFORM_CODENAME: "R"
       BSP_ROOT_DIR: "${{ github.workspace }}"
       BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
       BSP_KERNEL_OUT: "${{ github.workspace }}/out"
@@ -186,8 +188,7 @@ jobs:
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
 
-          # mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
-
+          
           mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-29/arch-arm64/usr/include"
    
           MODULE_LIST="
