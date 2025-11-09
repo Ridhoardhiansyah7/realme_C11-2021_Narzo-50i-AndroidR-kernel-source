@@ -53,7 +53,6 @@ jobs:
       BSP_ROOT_DIR: "${{ github.workspace }}"
       BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
       BSP_KERNEL_OUT: "${{ github.workspace }}/out"
-      # BSP_MODULES_DIST: "${{ github.workspace }}/out/modules"
       NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
 
       # Wlan
@@ -187,7 +186,7 @@ jobs:
           export BSP_KERNEL_PATH="${{ github.workspace }}/out"
           export BSP_MODULES_OUT="${{ github.workspace }}/out"
 
-          mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
+          # mkdir -p "${{ github.workspace }}/out/sharkl3/obj/modules/pvrsrvkm"
 
           mkdir -p "${{ github.workspace }}/prebuilts/ndk/platforms/android-29/arch-arm64/usr/include"
    
