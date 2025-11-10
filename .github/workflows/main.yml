@@ -66,11 +66,6 @@ jobs:
       BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
       BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r2p0"
       
-      BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE: "Cadence"
-      BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r6p0"
-      BSP_BOARD_CAMERA_MODULE_FD_VERSION: "fd2.0"
-      BSP_BOARD_CAMERA_MODULE_DVFS: "sharkl3"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -224,10 +219,13 @@ jobs:
                 CROSS_COMPILE=\"${{ env.CROSS_COMPILE }}\" CROSS_COMPILE_ARM32=\"${{ env.CROSS_COMPILE_ARM32 }}\" \
                 CLANG_TRIPLE=\"aarch64-none-linux-gnu-\" \
                 BSP_BUILD_ANDROID_OS=\"${{ env.BSP_BUILD_ANDROID_OS }}\" BSP_BUILD_FAMILY=\"${{ env.BSP_BUILD_FAMILY }}\" \
-                BSP_BUILD_DT_OVERLAY=\"${{ env.BSP_BUILD_DT_OVERLAY }}\" BSP_BOARD_CAMERA_MODULE_CPP_VERSION=\"${{ env.BSP_BOARD_CAMERA_MODULE_CPP_VERSION }}\" \
-                BSP_BOARD_CAMERA_MODULE_FD_VERSION=\"${{ env.BSP_BOARD_CAMERA_MODULE_FD_VERSION }}\" BSP_KERNEL_VERSION=\"${{ env.BSP_KERNEL_VERSION }}\" \
-                BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE=\"${{ env.BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE }}\" BSP_BOARD_UNISOC_WCN_SOCKET=\"${{ env.BSP_BOARD_UNISOC_WCN_SOCKET }}\" \
-                BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" BSP_BOARD_CAMERA_MODULE_DVFS=\"${{ env.BSP_BOARD_CAMERA_MODULE_DVFS }}\" \
+                BSP_BUILD_DT_OVERLAY=\"${{ env.BSP_BUILD_DT_OVERLAY }}\" \
+                BSP_KERNEL_VERSION=\"${{ env.BSP_KERNEL_VERSION }}\" \
+                BSP_BOARD_UNISOC_WCN_SOCKET=\"${{ env.BSP_BOARD_UNISOC_WCN_SOCKET }}\" \
+                BSP_BOARD_WLAN_DEVICE=\"${{ env.BSP_BOARD_WLAN_DEVICE }}\" \
+                BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION=\"${{ env.BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION }}\" \
+                BSP_BOARD_CAMERA_MODULE_ISP_VERSION=\"${{ env.BSP_BOARD_CAMERA_MODULE_ISP_VERSION }}\" \
+                BSP_BOARD_CAMERA_MODULE_CSI_VERSION=\"${{ env.BSP_BOARD_CAMERA_MODULE_CSI_VERSION }}\" \
                 modules"
 
              if [ "$KO_NAME" = "pvrsrvkm" ]; then
