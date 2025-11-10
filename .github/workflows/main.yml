@@ -57,14 +57,15 @@ jobs:
       BSP_KERNEL_OUT: "${{ github.workspace }}/out"
       NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
 
-      # Wlan&BT
+      # WCN
       BSP_BOARD_UNISOC_WCN_SOCKET: "sipc"
       BSP_BOARD_WLAN_DEVICE: "sc2332"
 
       # Camera
-      BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
-      BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r3p0"
       BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION: "sharkl3"
+      BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
+      BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r2p0"
+      
       BSP_BOARD_CAMERA_MODULE_VDSP_DEVICE: "Cadence"
       BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r6p0"
       BSP_BOARD_CAMERA_MODULE_FD_VERSION: "fd2.0"
