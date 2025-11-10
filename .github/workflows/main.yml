@@ -57,8 +57,8 @@ jobs:
       BSP_KERNEL_OUT: "${{ github.workspace }}/out"
       NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
 
-      # Wlan
-      BSP_BOARD_UNISOC_WCN_SOCKET: "sdio"
+      # Wlan&BT
+      BSP_BOARD_UNISOC_WCN_SOCKET: "sipc"
       BSP_BOARD_WLAN_DEVICE: "sc2332"
 
       # Camera
