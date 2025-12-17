@@ -6,17 +6,13 @@ ifeq ($(BSP_BUILD_ANDROID_OS),y)
 
 ifeq ($(BSP_BUILD_FAMILY),sharkl3)
 dtbo-$(CONFIG_ARCH_SPRD) += \
-	sp9863a-3h10-overlay.dtbo \
-	sp9863a-1c10-overlay.dtbo \
-	sp9863a-1h10-overlay.dtbo \
-	sp9863a-1h10_go-overlay.dtbo \
 	RMX3231-overlay.dtbo \
 	RMX3235-overlay.dtbo
 
-sp9863a-3h10-overlay.dtbo-base := sp9863a.dtb
-sp9863a-1c10-overlay.dtbo-base := sp9863a.dtb
-sp9863a-1h10-overlay.dtbo-base := sp9863a.dtb
-sp9863a-1h10_go-overlay.dtbo-base := sp9863a.dtb
+#sp9863a-3h10-overlay.dtbo-base := sp9863a.dtb
+#sp9863a-1c10-overlay.dtbo-base := sp9863a.dtb
+#sp9863a-1h10-overlay.dtbo-base := sp9863a.dtb
+#sp9863a-1h10_go-overlay.dtbo-base := sp9863a.dtb
 RMX3231-overlay.dtbo-base := sp9863a.dtb
 RMX3235-overlay.dtbo-base := sp9863a.dtb
 endif
