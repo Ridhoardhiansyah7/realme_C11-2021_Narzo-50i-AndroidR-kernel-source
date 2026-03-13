@@ -62,36 +62,36 @@ export PATH="${CLANG_PATH}/bin:${GCC_PATH}/bin:${PATH}"
 # ============================================
 
 #export BSP_BOARD_ARCH: arm64
-export BSP_BUILD_DT_OVERLAY: "y"
-export BSP_BUILD_ANDROID_OS: "y"
-export BSP_BUILD_FAMILY: "sharkl3"
-export BSP_BOARD_NAME: "sharkl3"
-export BSP_KERNEL_VERSION: "kernel4.14"
+export BSP_BUILD_DT_OVERLAY="y"
+export BSP_BUILD_ANDROID_OS="y"
+export BSP_BUILD_FAMILY="sharkl3"
+export BSP_BOARD_NAME="sharkl3"
+export BSP_KERNEL_VERSION="kernel4.14"
 
 # PowerVR
-export TARGET_KERNEL_ARCH: "arm64"
-export BSP_SYSTEM_VERSION: "sharkl3"
-export BSP_PRODUCT_NAME: "sharkl3"
-export TARGET_BOARD: "sharkl3"
-export TARGET_BOARD_PLATFORM: "sharkl3"
-export PLATFORM_RELEASE: "11"
-export PLATFORM_VERSION: "11"
-export PLATFORM_VERSION_CODENAME: "R"
-export PLATFORM_CODENAME: "R"
-export BSP_ROOT_DIR: "${{ github.workspace }}"
-export BSP_OUT_PLATFORM: "${{ github.workspace }}/out"
-export BSP_KERNEL_OUT: "${{ github.workspace }}/out"
-export NDK_PLATFORMS_ROOT: "${{ github.workspace }}/prebuilts/ndk/platforms"
+export TARGET_KERNEL_ARCH="arm64"
+export BSP_SYSTEM_VERSION="sharkl3"
+export BSP_PRODUCT_NAME="sharkl3"
+export TARGET_BOARD="sharkl3"
+export TARGET_BOARD_PLATFORM="sharkl3"
+export PLATFORM_RELEASE="11"
+export PLATFORM_VERSION="11"
+export PLATFORM_VERSION_CODENAME="R"
+export PLATFORM_CODENAME="R"
+export BSP_ROOT_DIR="${{ github.workspace }}"
+export BSP_OUT_PLATFORM="${{ github.workspace }}/out"
+export BSP_KERNEL_OUT="${{ github.workspace }}/out"
+export NDK_PLATFORMS_ROOT="${{ github.workspace }}/prebuilts/ndk/platforms"
 
 # WCN
-export BSP_BOARD_UNISOC_WCN_SOCKET: "sipc"
-export BSP_BOARD_WLAN_DEVICE: "sc2332"
+export BSP_BOARD_UNISOC_WCN_SOCKET="sipc"
+export BSP_BOARD_WLAN_DEVICE="sc2332"
 
 # Camera
-export BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION: "sharkl3"
-export BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
-export BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r2p0"
-export BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r4p0"
+export BSP_BOARD_CAMERA_MODULE_ISP_ADAPT_VERSION="sharkl3"
+export BSP_BOARD_CAMERA_MODULE_ISP_VERSION="isp2.6"
+export BSP_BOARD_CAMERA_MODULE_CSI_VERSION="receiver_r2p0"
+export BSP_BOARD_CAMERA_MODULE_CPP_VERSION="lite_r4p0"
 
 # ============================================
 # Build Process
