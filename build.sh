@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # ============================================
-# Kernel Build Script - Local Build (Adapted)
+# Kernel Build Script
 # ============================================
+
+set -euo pipefail
 
 # Paths
 KERNEL_ROOT="${GITHUB_WORKSPACE:-$(pwd)}"
@@ -18,21 +20,26 @@ MODULES_OUT="${KERNEL_ROOT}/modules_out"
 
 mkdir -p "$TOOLCHAIN_DIR"
 
-if [ ! -d "$CLANG_PATH" ]; then
+# Clang
+if [ ! -d "$CLANG_PATH/bin" ] || [ -z "$(ls -A "$CLANG_PATH/bin")" ]; then
     echo "[INFO]: Downloading Clang..."
     mkdir -p "$CLANG_PATH"
     wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/0e9e7035bf8ad42437c6156e5950eab13655b26c/clang-r383902b.tar.gz -O /tmp/clang.tar.gz
-    tar -xf /tmp/clang.tar.gz -C "$CLANG_PATH" && rm /tmp/clang.tar.gz
+    tar -xf /tmp/clang.tar.gz -C "$CLANG_PATH" --strip-components=1
+    rm /tmp/clang.tar.gz
 fi
 
-if [ ! -d "$GCC_PATH" ]; then
+# GCC
+if [ ! -d "$GCC_PATH/bin" ] || [ -z "$(ls -A "$GCC_PATH/bin")" ]; then
     echo "[INFO]: Downloading GCC 14.3..."
     mkdir -p "$GCC_PATH"
     wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz -O /tmp/gcc.tar.xz
-    tar -xf /tmp/gcc.tar.xz -C "$GCC_PATH" --strip-components=1 && rm /tmp/gcc.tar.xz
+    tar -xf /tmp/gcc.tar.xz -C "$GCC_PATH" --strip-components=1
+    rm /tmp/gcc.tar.xz
 fi
 
-chmod +x "$CLANG_PATH/bin/*" "$GCC_PATH/bin/*"
+# Ensure binaries are executable
+chmod +x "$CLANG_PATH/bin/"* "$GCC_PATH/bin/"*
 
 # ============================================
 # Environment Setup
@@ -51,7 +58,6 @@ export NM="llvm-nm"
 export OBJCOPY="llvm-objcopy"
 export OBJDUMP="llvm-objdump"
 export STRIP="llvm-strip"
-
 export LLVM=1
 export LLVM_IAS=1
 export CROSS_COMPILE="$GCC_PATH/bin/aarch64-none-linux-gnu-"
@@ -62,7 +68,7 @@ export CLANG_TRIPLE="aarch64-none-linux-gnu-"
 export PATH="$CLANG_PATH/bin:$GCC_PATH/bin:$PATH"
 
 # ============================================
-# UNISOC Board-Specific Properties
+# UNISOC Board-Specific Environment
 # ============================================
 
 export BSP_BUILD_DT_OVERLAY="y"
