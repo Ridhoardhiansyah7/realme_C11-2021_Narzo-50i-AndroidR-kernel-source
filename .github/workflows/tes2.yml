@@ -1,0 +1,36 @@
+name: Build Kernel
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+          bc bison build-essential curl flex git \
+          libssl-dev lzop python3 zip unzip
+
+      - name: Make build script executable
+        run: chmod +x build.sh
+
+      - name: Run kernel build
+        run: ./build.sh
+
+      - name: Upload kernel image and modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: Realme-C21Y-Kernel
+          path: |
+            kernel_out/arch/arm64/boot/Image
+            kernel_out/arch/arm64/boot/dts/
+            kernel_out/**/*.ko
