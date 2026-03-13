@@ -20,7 +20,6 @@ jobs:
       TOOLCHAIN_DIR: ${{ github.workspace }}/toolchains
       CLANG_PATH: ${{ github.workspace }}/toolchains/clang-r383902b
       GCC_PATH: ${{ github.workspace }}/toolchains/gcc-14.3
-
       CC: "ccache clang"
       LD: "ld.lld"
       AR: "llvm-ar"
@@ -54,7 +53,6 @@ jobs:
           mkdir -p ${{ env.OUT_DIR }} ${{ env.MODULES_OUT }} ${{ env.TOOLCHAIN_DIR }}
 
       - name: Download and setup Clang
-        if: ${{ !hashFiles(env.CLANG_PATH + '/bin/clang') }}
         run: |
           mkdir -p ${{ env.CLANG_PATH }}
           wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/0e9e7035bf8ad42437c6156e5950eab13655b26c/clang-r383902b.tar.gz -O /tmp/clang.tar.gz
@@ -63,7 +61,6 @@ jobs:
           chmod +x ${{ env.CLANG_PATH }}/bin/*
 
       - name: Download and setup GCC 14.3
-        if: ${{ !hashFiles(env.GCC_PATH + '/bin/aarch64-none-linux-gnu-gcc') }}
         run: |
           mkdir -p ${{ env.GCC_PATH }}
           wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz -O /tmp/gcc.tar.xz
@@ -93,10 +90,8 @@ jobs:
           export KBUILD_BUILD_USER="github-actions"
           export KBUILD_BUILD_HOST="github-actions"
 
-          # Defconfig
           make -C ${{ env.KERNEL_ROOT }} O=${{ env.OUT_DIR }} ARCH=$ARCH ${{ inputs.defconfig }} || exit 1
 
-          # Build
           make -C ${{ env.KERNEL_ROOT }} \
             O=${{ env.OUT_DIR }} \
             -j$(nproc) \
