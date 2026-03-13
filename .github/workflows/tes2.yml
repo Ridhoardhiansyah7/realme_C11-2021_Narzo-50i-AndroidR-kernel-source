@@ -53,27 +53,35 @@ jobs:
           mkdir -p ${{ env.OUT_DIR }} ${{ env.MODULES_OUT }} ${{ env.TOOLCHAIN_DIR }}
 
       - name: Download and setup Clang
-        if: ${{ !hashFiles(env.CLANG_PATH + '/bin/clang') }}
         run: |
-          mkdir -p ${{ env.CLANG_PATH }}
-          wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/0e9e7035bf8ad42437c6156e5950eab13655b26c/clang-r383902b.tar.gz -O /tmp/clang.tar.gz
-          tar -xf /tmp/clang.tar.gz -C ${{ env.CLANG_PATH }} --strip-components=1
-          rm /tmp/clang.tar.gz
-          chmod +x ${{ env.CLANG_PATH }}/bin/*
+          if [ ! -f "${CLANG_PATH}/bin/clang" ]; then
+            echo "[INFO] Downloading Clang..."
+            mkdir -p "${CLANG_PATH}"
+            wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/0e9e7035bf8ad42437c6156e5950eab13655b26c/clang-r383902b.tar.gz -O /tmp/clang.tar.gz
+            tar -xf /tmp/clang.tar.gz -C "${CLANG_PATH}" --strip-components=1
+            rm /tmp/clang.tar.gz
+            chmod +x "${CLANG_PATH}/bin/"*
+          else
+            echo "[INFO] Clang already exists, skipping download."
+          fi
 
       - name: Download and setup GCC 14.3
-        if: ${{ !hashFiles(env.GCC_PATH + '/bin/aarch64-none-linux-gnu-gcc') }}
         run: |
-          mkdir -p ${{ env.GCC_PATH }}
-          wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz -O /tmp/gcc.tar.xz
-          tar -xf /tmp/gcc.tar.xz -C ${{ env.GCC_PATH }} --strip-components=1
-          rm /tmp/gcc.tar.xz
-          chmod +x ${{ env.GCC_PATH }}/bin/*
+          if [ ! -f "${GCC_PATH}/bin/aarch64-none-linux-gnu-gcc" ]; then
+            echo "[INFO] Downloading GCC..."
+            mkdir -p "${GCC_PATH}"
+            wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz -O /tmp/gcc.tar.xz
+            tar -xf /tmp/gcc.tar.xz -C "${GCC_PATH}" --strip-components=1
+            rm /tmp/gcc.tar.xz
+            chmod +x "${GCC_PATH}/bin/"*
+          else
+            echo "[INFO] GCC already exists, skipping download."
+          fi
 
       - name: Setup PATH and ccache
         run: |
-          echo "${{ env.CLANG_PATH }}/bin" >> $GITHUB_PATH
-          echo "${{ env.GCC_PATH }}/bin" >> $GITHUB_PATH
+          echo "${CLANG_PATH}/bin" >> $GITHUB_PATH
+          echo "${GCC_PATH}/bin" >> $GITHUB_PATH
           ccache -M 5G
           ccache -z
 
@@ -83,10 +91,10 @@ jobs:
           export KBUILD_BUILD_USER="github-actions"
           export KBUILD_BUILD_HOST="github-actions"
 
-          # Defconfig
+          # Generate defconfig
           make -C ${{ env.KERNEL_ROOT }} O=${{ env.OUT_DIR }} ARCH=$ARCH ${{ inputs.defconfig }} || exit 1
 
-          # Build
+          # Build kernel + modules + dtbs
           make -C ${{ env.KERNEL_ROOT }} \
             O=${{ env.OUT_DIR }} \
             -j$(nproc) \
@@ -105,6 +113,8 @@ jobs:
           if [ -d "$DTB_SRC" ]; then
             cp $DTB_SRC/*.dtb $DTB_DST/ || true
             cp $DTB_SRC/*.dtbo $DTB_DST/ || true
+          else
+            echo "::warning::DTB directory not found!"
           fi
 
       - name: Package Kernel and Modules
