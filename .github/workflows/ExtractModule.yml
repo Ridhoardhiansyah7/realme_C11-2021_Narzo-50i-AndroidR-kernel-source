@@ -2,36 +2,23 @@ name: Extract Kernel Modules
 
 on:
   workflow_dispatch:
-    inputs:
-      kernel_repo:
-        description: "Kernel repository URL"
-        required: true
-        default: "https://github.com/USERNAME/KERNEL_REPO.git"
-      kernel_branch:
-        description: "Branch"
-        required: false
-        default: "main"
 
 jobs:
   extract:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (empty repo)
+      - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Clone Kernel Source
-        run: |
-          git clone --depth=1 -b "${{ github.event.inputs.kernel_branch }}" "${{ github.event.inputs.kernel_repo }}" kernel
 
       - name: Find and Copy kernel_modules
         run: |
           mkdir -p output
 
-          if [ -d "kernel/driver/kernel_modules" ]; then
-            cp -r kernel/driver/kernel_modules output/
-          elif [ -d "kernel/drivers/kernel_modules" ]; then
-            cp -r kernel/drivers/kernel_modules output/
+          if [ -d "driver/kernel_modules" ]; then
+            cp -r driver/kernel_modules output/
+          elif [ -d "drivers/kernel_modules" ]; then
+            cp -r drivers/kernel_modules output/
           else
             echo "kernel_modules folder not found!"
             exit 1
