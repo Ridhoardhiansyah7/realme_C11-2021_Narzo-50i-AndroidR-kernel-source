@@ -15,8 +15,8 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "driver/input/touchscreen/Himax" ]; then
-            cp -r driver/input/touchscreen/Himax output/
+          if [ -d "drivers/input/touchscreen/Himax" ]; then
+            cp -r drivers/input/touchscreen/Himax output/
           else
             echo "Himax touchscreen folder not found!"
             exit 1
