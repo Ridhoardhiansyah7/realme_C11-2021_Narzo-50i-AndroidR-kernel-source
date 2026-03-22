@@ -15,33 +15,19 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "drivers/input/touchscreen/ICNL9911" ]; then
-            cp -r drivers/input/touchscreen/ICNL9911 output/
+          if [ -d "drivers/misc/hqhardwareinfo" ]; then
+            cp -r drivers/misc/hqhardwareinfo output/
           fi
           
-          if [ -d "drivers/input/touchscreen/adaptive-ts" ]; then
-            cp -r drivers/input/touchscreen/adaptive-ts output/
-          fi
-          
-          if [ -d "drivers/input/touchscreen/ili9882N" ]; then
-            cp -r drivers/input/touchscreen/ili9882N output/
-          fi
-          
-          if [ -d "drivers/input/touchscreen/jdchipset" ]; then
-            cp -r drivers/input/touchscreen/jdchipset output/
-          fi
           
 
       - name: Zip result
         run: |
           cd output
-            zip -r ICNL9911.zip ICNL9911
-            zip -r adaptive-ts.zip adaptive-ts
-            zip -r ili9882N.zip ili9882N
-            zip -r jdchipset.zip jdchipset
+            zip -r hqhardwareinfo.zip hqhardwareinfo
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: touchscreen-driver
+          name: hqhardwareinfo
           path: output/*.zip
