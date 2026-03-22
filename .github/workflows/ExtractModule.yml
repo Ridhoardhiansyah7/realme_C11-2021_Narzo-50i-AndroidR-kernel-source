@@ -15,8 +15,8 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "drivers/input/touchscreen/Himax" ]; then
-            cp -r drivers/input/touchscreen/Himax output/
+          if [ -d "drivers/input/touchscreen/focaltech_touch" ]; then
+            cp -r drivers/input/touchscreen/focaltech_touch output/
           else
             echo "Himax touchscreen folder not found!"
             exit 1
@@ -25,10 +25,10 @@ jobs:
       - name: Zip result
         run: |
           cd output
-            zip -r Himax.zip Himax
+            zip -r focaltech_touch.zip Himax
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kernel_modules
-          path: output/Himax.zip
+          name: focaltech_touch
+          path: output/focaltech_touch.zip
