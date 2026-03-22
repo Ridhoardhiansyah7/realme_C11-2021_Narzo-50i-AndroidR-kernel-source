@@ -17,16 +17,20 @@ jobs:
 
           if [ -d "drivers/input/touchscreen/ICNL9911" ]; then
             cp -r drivers/input/touchscreen/ICNL9911 output/
-          elif [ -d "drivers/input/touchscreen/adaptive-ts" ]; then
-            cp -r drivers/input/touchscreen/adaptive-ts output/
-          elif [ -d "drivers/input/touchscreen/ili9882N" ]; then
-            cp -r drivers/input/touchscreen/ili9882N output/
-          elif [ -d "drivers/input/touchscreen/jdchipset" ]; then
-            cp -r drivers/input/touchscreen/jdchipset output/
-          else
-            echo "some touchseen folder not found!"
-            exit 1
           fi
+          
+          if [ -d "drivers/input/touchscreen/adaptive-ts" ]; then
+            cp -r drivers/input/touchscreen/adaptive-ts output/
+          fi
+          
+          if [ -d "drivers/input/touchscreen/ili9882N" ]; then
+            cp -r drivers/input/touchscreen/ili9882N output/
+          fi
+          
+          if [ -d "drivers/input/touchscreen/jdchipset" ]; then
+            cp -r drivers/input/touchscreen/jdchipset output/
+          fi
+          
 
       - name: Zip result
         run: |
