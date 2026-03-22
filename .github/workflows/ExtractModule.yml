@@ -15,20 +15,29 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "drivers/input/touchscreen/focaltech_touch" ]; then
-            cp -r drivers/input/touchscreen/focaltech_touch output/
+          if [ -d "drivers/input/touchscreen/ICNL9911" ]; then
+            cp -r drivers/input/touchscreen/ICNL9911 output/
+          elif [ -d "drivers/input/touchscreen/adaptive-ts" ]; then
+            cp -r drivers/input/touchscreen/adaptive-ts output/
+          elif [ -d "drivers/input/touchscreen/ili9882N" ]; then
+            cp -r drivers/input/touchscreen/ili9882N output/
+          elif [ -d "drivers/input/touchscreen/jdchipset" ]; then
+            cp -r drivers/input/touchscreen/jdchipset output/
           else
-            echo "focaltech_touch folder not found!"
+            echo "some touchseen folder not found!"
             exit 1
           fi
 
       - name: Zip result
         run: |
           cd output
-            zip -r focaltech_touch.zip focaltech_touch
+            zip -r ICNL9911.zip ICNL9911
+            zip -r adaptive-ts.zip adaptive-ts
+            zip -r ili9882N.zip ili9882N
+            zip -r jdchipset.zip jdchipset
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: focaltech_touch
-          path: output/focaltech_touch.zip
+          name: touchscreen-driver
+          path: output/*.zip
