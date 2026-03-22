@@ -15,22 +15,20 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "driver/kernel_modules" ]; then
-            cp -r driver/kernel_modules output/
-          elif [ -d "drivers/kernel_modules" ]; then
-            cp -r drivers/kernel_modules output/
+          if [ -d "driver/input/touchscreen/Himax" ]; then
+            cp -r driver/input/touchscreen/Himax output/
           else
-            echo "kernel_modules folder not found!"
+            echo "Himax touchscreen folder not found!"
             exit 1
           fi
 
       - name: Zip result
         run: |
           cd output
-          zip -r kernel_modules.zip kernel_modules
+            zip -r Himax.zip Himax
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kernel_modules
-          path: output/kernel_modules.zip
+          path: output/Himax.zip
