@@ -15,8 +15,8 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "drivers/misc/hqhardwareinfo" ]; then
-            cp -r drivers/misc/hqhardwareinfo output/
+          if [ -d "drivers/misc/device_info" ]; then
+            cp -r drivers/misc/device_info output/
           fi
           
           
@@ -24,7 +24,7 @@ jobs:
       - name: Zip result
         run: |
           cd output
-            zip -r hqhardwareinfo.zip hqhardwareinfo
+            zip -r device_info.zip device_info
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
