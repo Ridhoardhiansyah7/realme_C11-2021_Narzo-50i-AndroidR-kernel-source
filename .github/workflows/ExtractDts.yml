@@ -1,0 +1,34 @@
+name: Extract SPRD DTs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Find and Copy kernel_modules
+        run: |
+          mkdir -p output
+
+          if [ -d "arch/arm64/boot/dts/sprd" ]; then
+            cp -r arch/arm64/boot/dts/sprd output/
+          else
+            echo "SPRD DTs folder not found!"
+            exit 1
+          fi
+
+      - name: Zip result
+        run: |
+          cd output
+          zip -r sprd_DTs.zip sprd
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel_modules
+          path: output/sprd_DTs.zip
