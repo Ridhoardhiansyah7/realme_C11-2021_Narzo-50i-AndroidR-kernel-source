@@ -18,14 +18,14 @@ jobs:
           if [ -d "drivers/input/touchscreen/focaltech_touch" ]; then
             cp -r drivers/input/touchscreen/focaltech_touch output/
           else
-            echo "Himax touchscreen folder not found!"
+            echo "focaltech_touch folder not found!"
             exit 1
           fi
 
       - name: Zip result
         run: |
           cd output
-            zip -r focaltech_touch.zip Himax
+            zip -r focaltech_touch.zip focaltech_touch
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
