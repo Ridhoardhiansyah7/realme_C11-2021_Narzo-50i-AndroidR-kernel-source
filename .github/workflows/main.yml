@@ -137,6 +137,7 @@ jobs:
           # debug
           grep -r "get_hardware_info_data" -n .
           grep -R "chipid_num" -n .
+          grep -r "otg_switch_mode" -n .
 
           # Build metadata
           export KBUILD_BUILD_HOST="$(. /etc/os-release && echo ${NAME}-${VERSION_ID})"
