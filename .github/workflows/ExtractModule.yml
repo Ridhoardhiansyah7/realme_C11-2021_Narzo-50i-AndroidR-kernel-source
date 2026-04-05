@@ -15,8 +15,8 @@ jobs:
         run: |
           mkdir -p output
 
-          if [ -d "drivers/misc/device_info" ]; then
-            cp -r drivers/misc/device_info output/
+          if [ -d "drivers/kernel_modules" ]; then
+            cp -r drivers/kernel_modules output/
           fi
           
           
@@ -24,10 +24,10 @@ jobs:
       - name: Zip result
         run: |
           cd output
-            zip -r device_info.zip device_info
+            zip -r kernel_modules.zip kernel_modules
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hqhardwareinfo
+          name: kernel_modules
           path: output/*.zip
