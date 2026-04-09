@@ -43,7 +43,6 @@ static char *devinfo_prj_name;
 static char *devinfo_pcb_version;
 
 static struct of_device_id devinfo_id[] = {
-	{.compatible = "oppo, device_info",},
     {.compatible = "oplus, device_info",},
 	{},
 };
