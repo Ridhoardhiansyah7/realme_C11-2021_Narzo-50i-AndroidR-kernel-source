@@ -1816,9 +1816,15 @@ static irqreturn_t headset_button_irq_handler(int irq, void *dev)
 			pdata->gpios[HDST_GPIO_BUTTON],
 			hdst->gpio_btn_val_last, val);
 
-		if (hdst->plug_stat_last == 0)
-			headset_irq_button_enable(0, hdst->irq_button);
+		snd_soc_jack_report(&hdst->jack,
+                        SND_JACK_HEADPHONE,
+                        SND_JACK_HEADPHONE);
 
+		headset_irq_button_enable(0, hdst->irq_button);
+
+		/*if (hdst->plug_stat_last == 0)
+			headset_irq_button_enable(0, hdst->irq_button);
+		*/
 		return IRQ_HANDLED;
 	}
 
