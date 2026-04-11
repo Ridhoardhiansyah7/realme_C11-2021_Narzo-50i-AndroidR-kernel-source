@@ -39,8 +39,8 @@
 				status = "okay";
 			};
 
-			oplus_devinfo:oplus_devinfo {
-				compatible = "oplus, device_info";
+			oppo_devinfo:oppo_devinfo {
+				compatible = "oppo, device_info";
 				sub_board-gpio = <&ap_gpio 96 0>;
 				sdcard-gpio = <&ap_gpio 9 0>;
 				status = "okay";
@@ -287,7 +287,7 @@
 	status = "okay";
 	
         touchscreen@0 {
-			compatible = "oplus,touchscreen";
+			compatible = "oppo,touchscreen";
 			spi-max-frequency = <6000000>;
 			reg = <0>;
 			touch,irq-gpio = <&ap_gpio 72 0>;
