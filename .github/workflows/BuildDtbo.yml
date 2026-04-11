@@ -15,9 +15,20 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Download ZIP
+      - name: Install tools
         run: |
-          curl -L "${{ github.event.inputs.zip_url }}" -o dtbo.zip
+          sudo apt-get update
+          sudo apt-get install -y unzip wget curl
+
+      - name: Download ZIP (support MediaFire)
+        run: |
+          echo "Downloading from: ${{ github.event.inputs.zip_url }}"
+          wget --content-disposition "${{ github.event.inputs.zip_url }}" -O dtbo.zip
+
+      - name: Check file
+        run: |
+          file dtbo.zip
+          ls -lah dtbo.zip
 
       - name: Extract ZIP
         run: |
@@ -30,20 +41,21 @@ jobs:
           cat list.txt
 
           if [ ! -s list.txt ]; then
-            echo "No dtbo files found!"
+            echo "❌ No dtbo files found!"
             exit 1
           fi
 
       - name: Download mkdtboimg
         run: |
           curl -L "https://android.googlesource.com/platform/system/libufdt/+/refs/heads/main/utils/src/mkdtboimg.py?format=TEXT" | base64 -d > mkdtboimg.py
+          chmod +x mkdtboimg.py
 
       - name: Build dtbo.img
         run: |
           python3 mkdtboimg.py create dtbo.img $(cat list.txt)
 
-      - name: Upload dtbo.img
+      - name: Upload result
         uses: actions/upload-artifact@v4
         with:
-          name: dtbo-img
+          name: dtbo-image
           path: dtbo.img
