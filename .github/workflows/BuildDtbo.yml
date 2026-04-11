@@ -1,60 +1,49 @@
 name: Build dtbo.img from ZIP
 
 on:
-workflow_dispatch:
-inputs:
-zip_url:
-description: "URL ZIP berisi file *.dtbo"
-required: true
+  workflow_dispatch:
+    inputs:
+      zip_url:
+        description: "URL ZIP berisi file .dtbo"
+        required: true
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: 📥 Checkout repo
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  - name: 🐍 Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: '3.x'
+      - name: Download ZIP
+        run: |
+          curl -L "${{ github.event.inputs.zip_url }}" -o dtbo.zip
 
-  - name: 📦 Download ZIP
-    run: |
-      echo "Downloading ZIP..."
-      curl -L "${{ github.event.inputs.zip_url }}" -o dtbo.zip
+      - name: Extract ZIP
+        run: |
+          mkdir extracted
+          unzip -o dtbo.zip -d extracted
 
-  - name: 📂 Extract ZIP
-    run: |
-      echo "Extracting ZIP..."
-      mkdir extracted
-      unzip -o dtbo.zip -d extracted
+      - name: Find DTBO files
+        run: |
+          find extracted -type f -name "*.dtbo" | sort > list.txt
+          cat list.txt
 
-  - name: 🔍 Find DTBO files
-    run: |
-      echo "Searching for .dtbo files..."
-      find extracted -type f -name "*.dtbo" | sort > dtbo_list.txt
-      cat dtbo_list.txt
+          if [ ! -s list.txt ]; then
+            echo "No dtbo files found!"
+            exit 1
+          fi
 
-      if [ ! -s dtbo_list.txt ]; then
-        echo "❌ No dtbo files found!"
-        exit 1
-      fi
+      - name: Download mkdtboimg
+        run: |
+          curl -L "https://android.googlesource.com/platform/system/libufdt/+/refs/heads/main/utils/src/mkdtboimg.py?format=TEXT" | base64 -d > mkdtboimg.py
 
-  - name: 📦 Get mkdtboimg tool (AOSP)
-    run: |
-      echo "Downloading mkdtboimg.py..."
-      curl -L https://android.googlesource.com/platform/system/libufdt/+/refs/heads/main/utils/src/mkdtboimg.py?format=TEXT | base64 -d > mkdtboimg.py
-      chmod +x mkdtboimg.py
+      - name: Build dtbo.img
+        run: |
+          python3 mkdtboimg.py create dtbo.img $(cat list.txt)
 
-  - name: 🛠️ Build dtbo.img
-    run: |
-      echo "Building dtbo.img..."
-      python3 mkdtboimg.py create dtbo.img $(cat dtbo_list.txt)
-
-  - name: 📤 Upload artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: dtbo-image
-      path: dtbo.img
+      - name: Upload dtbo.img
+        uses: actions/upload-artifact@v4
+        with:
+          name: dtbo-img
+          path: dtbo.img
