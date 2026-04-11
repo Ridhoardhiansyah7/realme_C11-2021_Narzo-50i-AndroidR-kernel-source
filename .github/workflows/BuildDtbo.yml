@@ -104,6 +104,7 @@ jobs:
       - name: Build dtbo.img
         run: |
           python3 mkdtboimg.py create dtbo.img $(cat list.txt)
+          python3 mkdtboimg.py dump dtbo.img
 
       # =========================================
       # Upload result
