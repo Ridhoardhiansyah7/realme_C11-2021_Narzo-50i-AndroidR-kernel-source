@@ -8,6 +8,11 @@ on:
         description: 'Kernel defconfig name (e.g., RMX3235_defconfig)'
         required: true
         default: 'RMX3235_defconfig'
+      build_kernel_module:
+        description: "set to true if you want to build (.ko) file"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -66,7 +71,7 @@ jobs:
       BSP_BOARD_CAMERA_MODULE_ISP_VERSION: "isp2.6"
       BSP_BOARD_CAMERA_MODULE_CSI_VERSION: "receiver_r2p0"
       BSP_BOARD_CAMERA_MODULE_CPP_VERSION: "lite_r4p0"
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -134,12 +139,6 @@ jobs:
         run: |
           echo -e "\n[INFO]: KERNEL BUILD STARTED..!\n"
 
-          # debug
-          grep -r "get_hardware_info_data" -n .
-          grep -R "chipid_num" -n .
-          grep -r "otg_switch_mode" -n .
-          grep -r extcon_gpio_id -n .
-
           # Build metadata
           export KBUILD_BUILD_HOST="$(. /etc/os-release && echo ${NAME}-${VERSION_ID})"
           export KBUILD_BUILD_TIMESTAMP="$(date '+%a %b %d %T WIB %Y')"
@@ -185,6 +184,7 @@ jobs:
             modules_install || exit 1
           
       - name: Build Out-of-Tree Modules
+        if: ${{ inputs.build_kernel_module == true }}
         run: |
           echo "[INFO]: Building all out-of-tree modules..."
           
@@ -259,7 +259,7 @@ jobs:
               if [ "$EXTRA_ARGS" != "NONE" ]; then
                 MAKE_CMD="$MAKE_CMD $EXTRA_ARGS"
               fi
-              
+
               eval $MAKE_CMD
 
               if [ "$KO_NAME" = "pvrsrvkm" ]; then
@@ -280,6 +280,7 @@ jobs:
           done
 
       - name: Install Out-of-Tree Modules and Generate Dependencies
+        if: ${{ inputs.build_kernel_module == true }}
         run: |
           echo "[INFO]: Installing all out-of-tree modules..."
           
