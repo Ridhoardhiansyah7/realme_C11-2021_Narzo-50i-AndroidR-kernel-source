@@ -1,9 +1,9 @@
 name: Upstream Kernel Patch
 
 on:
-  push:
-    branches:
-      - 4.14.336
+#  push:
+#    branches:
+#      - 4.14.336
   workflow_dispatch:
 
 jobs:
