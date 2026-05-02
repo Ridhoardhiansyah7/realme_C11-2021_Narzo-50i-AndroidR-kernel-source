@@ -1,0 +1,84 @@
+name: Upstream Kernel Patch
+
+on:
+  push:
+    branches:
+      - 4.14.336
+  workflow_dispatch:
+
+jobs:
+  upstream:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup git
+        run: |
+          git config --global user.name "Aflahal"
+          git config --global user.email "zxx97607@gmail.com"
+
+      - name: Show branch
+        run: |
+          git branch
+          git status
+
+      - name: Add upstream Linux
+        run: |
+          git remote add upstream https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git || true
+          git fetch upstream --tags
+
+      - name: Generate patches
+        run: |
+          mkdir -p patches safe
+          git format-patch v4.14.193..v4.14.336 -o patches
+
+      - name: Filter unsafe patches
+        run: |
+          echo "[*] Filtering patches..."
+          > skipped.log
+
+          for p in patches/*.patch; do
+            if grep -qE "drivers/android|mm/|fs/|include/linux/fs|drivers/hid|drivers/vfio|arch/.*/kvm|drivers/block" "$p"; then
+              echo "[SKIP] $p" | tee -a skipped.log
+            else
+              cp "$p" safe/
+              echo "[OK] $p"
+            fi
+          done
+
+      - name: Apply safe patches
+        run: |
+          set +e
+          > failed.log
+
+          for p in safe/*.patch; do
+            echo "Applying $p"
+            git am "$p"
+
+            if [ $? -ne 0 ]; then
+              echo "[FAIL] $p" | tee -a failed.log
+              git am --skip
+            fi
+          done
+
+      - name: Commit changes
+        run: |
+          git add . ':!failed.log' ':!skipped.log' ':!patches' ':!safe'
+          git commit -m "apply upstream patches" || echo "No changes"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch-report
+          path: |
+            skipped.log
+            failed.log
+            patches/
+            safe/
+
+      - name: Push changes
+        run: |
+          git push origin 4.14.336
