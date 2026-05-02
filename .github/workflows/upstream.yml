@@ -32,7 +32,7 @@ jobs:
       - name: Generate patches
         run: |
           mkdir -p patches safe
-          git format-patch v4.14.193..v4.14.336 -o patches
+          git format-patch v4.14.193..v4.14.200 -o patches
 
       - name: Filter unsafe patches
         run: |
@@ -65,7 +65,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add . ':!failed.log' ':!skipped.log' ':!patches' ':!safe'
+          git add . ':!failed.log' ':!skipped.log' ':!patches' ':!safe' || true
           git commit -m "apply upstream patches" || echo "No changes"
 
       - name: Upload artifacts
