@@ -1,9 +1,6 @@
 name: SukiSU Integration Only
 
 on:
-  push:
-    branches:
-      - 4.14.200-KernelSU
   workflow_dispatch:
   
 
