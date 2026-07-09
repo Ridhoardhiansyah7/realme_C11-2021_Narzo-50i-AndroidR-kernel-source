@@ -615,6 +615,7 @@ static const struct dev_pm_ops jadard_common_pm_ops = {
 
 #ifdef CONFIG_OF
 static struct of_device_id jadard_match_table[] = {
+	{.compatible = "oppo,touchscreen" },
 	{.compatible = "oplus,touchscreen" },
 	{},
 };
