@@ -25,6 +25,7 @@
 #define DTS_INT_GPIO	"touch,irq-gpio"
 #define DTS_RESET_GPIO	"touch,rst-gpio"
 #define DTS_OF_NAME	"oplus,touchscreen"
+#define DTS_OF_NEW_NAME "oppo,touchscreen"
 
 static int Is_this_tp_ili9882n = 0;
 static int __init get_ili9882n_mode(char *str)
@@ -619,6 +620,7 @@ static const struct dev_pm_ops tp_pm_ops = {
 
 static const struct of_device_id tp_match_table[] = {
 	{.compatible = DTS_OF_NAME},
+	{.compatible = DTS_OF_NEW_NAME},
 	{},
 };
 
