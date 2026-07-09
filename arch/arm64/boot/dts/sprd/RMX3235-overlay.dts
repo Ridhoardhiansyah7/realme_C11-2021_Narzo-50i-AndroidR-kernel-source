@@ -39,13 +39,6 @@
 				status = "okay";
 			};
 
-            oppo_devinfo:oppo_devinfo {
-				compatible = "oppo, device_info";
-				sub_board-gpio = <&ap_gpio 96 0>;
-				sdcard-gpio = <&ap_gpio 9 0>;
-				status = "okay";
-			};
-
 			op_rf_cable {
 				compatible = "op,rf_cable";
 				status = "okay";
