@@ -143,7 +143,7 @@ FILLDIR_RETURN_TYPE my_actor(MY_ACTOR_CTX_ARG, const char *name,
 #define ksu_get_magic(x) ((x)->f_path.dentry->d_inode->i_sb->s_magic)
 #endif
 
-void search_manager(const char *path, int depth, struct list_head *uid_data)
+static noinline void search_manager(const char *path, int depth, struct list_head *uid_data)
 {
 	int i, stop = 0;
 	struct list_head data_path_list;
@@ -297,7 +297,7 @@ static void throne_tracker_fn(bool prune_only)
 			break;
 		}
 		data->uid = res;
-		strncpy(data->package, package, KSU_MAX_PACKAGE_NAME);
+		strscpy(data->package, package, sizeof(data->package));
 		list_add_tail(&data->list, &uid_list);
 		// reset line start
 		line_start = pos;
@@ -375,7 +375,7 @@ test_list:
 
 start_tt:
 	// lessen that window where user opens manager right away, yet its not crowned
-	set_user_nice(current, -20);
+	set_user_nice(current, -10);
 
 	escape_to_root_forced();
 	throne_tracker_fn(prune_only);

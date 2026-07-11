@@ -7,9 +7,8 @@
  * by offloading it to a kthread.
  */
 
-static uintptr_t system_dir_inode_ptr = NULL;
+static void *system_dir_inode_ptr = NULL;
 
-__attribute__((cold))
 static noinline void ksu_grab_data_system_inode()
 {
 	struct path path;
@@ -19,9 +18,28 @@ static noinline void ksu_grab_data_system_inode()
 		return;
 	}
 
-	system_dir_inode_ptr = (uintptr_t)d_inode(path.dentry);
+	system_dir_inode_ptr = (void *)d_inode(path.dentry);
 	pr_info("renameat: cached /data/system d_inode: 0x%lx\n", system_dir_inode_ptr);
 	path_put(&path);
+}
+
+static noinline void ksu_rename_observer_slow(struct dentry *old_dentry, struct dentry *new_dentry)
+{
+	system_dir_inode_ptr = NULL; // reset cached inode
+
+	char path[128] = { 0 };
+	char *buf = dentry_path_raw(new_dentry, path, sizeof(path) - 1);
+	if (IS_ERR(buf)) {
+		pr_err("dentry_path_raw failed.\n");
+		return;
+	}
+
+	if (!strstr(buf, "/system/packages.list"))
+		return;
+
+	pr_info("renameat: %s -> %s, new path: %s\n", old_dentry->d_iname, new_dentry->d_iname, buf);
+	track_throne(false);
+	return;
 }
 
 static inline void ksu_rename_observer(struct dentry *old_dentry, struct dentry *new_dentry)
@@ -63,7 +81,7 @@ static inline void ksu_rename_observer(struct dentry *old_dentry, struct dentry 
 	 * alternatively we can use packages.list inode change as trigger too, however,
 	 * we need to save last state. more writes.
 	 */
-	if (unlikely((uintptr_t)new_dentry->d_parent->d_inode != system_dir_inode_ptr))
+	if (unlikely((void *)new_dentry->d_parent->d_inode != system_dir_inode_ptr))
 		goto slow_path;
 
 	pr_info("renameat: %s -> %s, /data/system d_inode: 0x%lx \n", old_dentry->d_iname, new_dentry->d_iname, system_dir_inode_ptr);
@@ -71,19 +89,6 @@ static inline void ksu_rename_observer(struct dentry *old_dentry, struct dentry 
 	return;
 
 slow_path:
-	system_dir_inode_ptr = NULL; // reset cached inode
-
-	char path[128] = { 0 };
-	char *buf = dentry_path_raw(new_dentry, path, sizeof(path) - 1);
-	if (IS_ERR(buf)) {
-		pr_err("dentry_path_raw failed.\n");
-		return;
-	}
-
-	if (!strstr(buf, "/system/packages.list"))
-		return;
-
-	pr_info("renameat: %s -> %s, new path: %s\n", old_dentry->d_iname, new_dentry->d_iname, buf);
-	track_throne(false);
+	ksu_rename_observer_slow(old_dentry, new_dentry);
 	return;
 }
