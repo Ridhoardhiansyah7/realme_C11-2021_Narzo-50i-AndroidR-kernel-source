@@ -26,6 +26,7 @@
 #include <linux/input.h>
 #include <linux/uaccess.h>
 #include <linux/spi/spi.h>
+#include <linux/version.h>
 
 #include "sf_ctl.h"
 
@@ -1191,6 +1192,14 @@ static int sf_read_sensor_id(void)
     return -1;
 }
 
+#endif
+
+#ifndef CONFIG_FB
+struct fb_info;
+int fb_blank(struct fb_info *info, int blank)
+{
+    return 0;
+}
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
