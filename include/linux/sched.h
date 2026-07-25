@@ -504,6 +504,17 @@ struct sched_entity {
 	u64				s_sum_exec_runtime;
 	u64				b_sum_exec_runtime;
 
+#ifdef CONFIG_SCHED_BORE
+	u64				burst_time;
+	u8				prev_burst_penalty;
+	u8				curr_burst_penalty;
+	u8				burst_penalty;
+	u8				slice_score;
+	u8				child_burst;
+	u16				child_burst_cnt;
+	u64				child_burst_last_cached;
+#endif // CONFIG_SCHED_BORE
+
 	u64				nr_migrations;
 
 	struct sched_statistics		statistics;
