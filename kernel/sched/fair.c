@@ -177,18 +177,38 @@ static inline u32 calc_burst_penalty(u64 burst_time) {
 static inline struct task_struct *task_of(struct sched_entity *se);
 
 static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
-	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->slice_score], 22);
+	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->burst_score], 22);
+}
+
+static void reweight_task(struct task_struct *p, int prio)
+{
+	struct sched_entity *se = &p->se;
+	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	struct load_weight *load = &se->load;
+	unsigned long weight = scale_load(sched_prio_to_weight[prio]);
+
+	reweight_entity(cfs_rq, se, weight);
+	
+	load->inv_weight = sched_prio_to_wmult[prio];
 }
 
 static void update_burst_score(struct sched_entity *se) {
+	struct task_struct *p;
+	u8 prio, prev_prio, new_prio;
+	
+#ifndef entity_is_task
+#define entity_is_task(se) (!se->my_q)
+#endif
+	
 	if (!entity_is_task(se)) return;
-	struct task_struct *p = task_of(se);
-	u8 prio = p->static_prio - MAX_RT_PRIO;
-	u8 prev_prio = min(39, prio + se->burst_score);
+	
+	p = task_of(se);
+	prio = p->static_prio - MAX_RT_PRIO;
+	prev_prio = min(39, prio + se->burst_score);
 
 	se->burst_score = se->burst_penalty >> 2;
 
-	u8 new_prio = min(39, prio + se->burst_score);
+	new_prio = min(39, prio + se->burst_score);
 	if (new_prio != prev_prio)
 		reweight_task(p, new_prio);
 }
@@ -197,10 +217,6 @@ static void update_burst_penalty(struct sched_entity *se) {
 	se->curr_burst_penalty = calc_burst_penalty(se->burst_time);
 	se->burst_penalty = max(se->prev_burst_penalty, se->curr_burst_penalty);
 	update_burst_score(se);
-}
-
-static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
-	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->burst_score], 22);
 }
 
 static inline u32 binary_smooth(u32 new, u32 old) {
@@ -8662,7 +8678,7 @@ static void yield_task_fair(struct rq *rq)
 	 * so we don't do microscopic update in schedule()
 	 * and double the fastpath cost.
 	 */
-	rq_clock_skip_update(rq);
+	rq_clock_skip_update(rq,true);
 
 	set_skip_buddy(se);
 }
