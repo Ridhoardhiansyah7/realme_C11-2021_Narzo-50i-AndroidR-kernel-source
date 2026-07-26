@@ -154,12 +154,19 @@ uint __read_mostly sched_burst_penalty_offset   = 22;
 uint __read_mostly sched_burst_penalty_scale    = 1280;
 uint __read_mostly sched_burst_cache_lifetime   = 60000000;
 
-#define MAX_BURST_PENALTY (39U <<2)
+#define MAX_BURST_PENALTY (39U << 2)
+
+static inline struct task_struct *task_of(struct sched_entity *se);
+static void reweight_task(struct task_struct *p, int prio);
+#ifndef entity_is_task
+#define entity_is_task(se) (!se->my_q)
+#endif
+
 
 static inline u32 log2plus1_u64_u32f8(u64 v) {
 	u32 msb = fls64(v);
 	s32 excess_bits = msb - 9;
-    u8 fractional = (0 <= excess_bits)? v >> excess_bits: v << -excess_bits;
+	u8 fractional = (0 <= excess_bits) ? v >> excess_bits : v << -excess_bits;
 	return msb << 8 | fractional;
 }
 
@@ -174,32 +181,14 @@ static inline u32 calc_burst_penalty(u64 burst_time) {
 	return min(MAX_BURST_PENALTY, scaled_penalty);
 }
 
-static inline struct task_struct *task_of(struct sched_entity *se);
-
 static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
 	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->burst_score], 22);
-}
-
-static void reweight_task(struct task_struct *p, int prio)
-{
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-	struct load_weight *load = &se->load;
-	unsigned long weight = scale_load(sched_prio_to_weight[prio]);
-
-	reweight_entity(cfs_rq, se, weight);
-	
-	load->inv_weight = sched_prio_to_wmult[prio];
 }
 
 static void update_burst_score(struct sched_entity *se) {
 	struct task_struct *p;
 	u8 prio, prev_prio, new_prio;
-	
-#ifndef entity_is_task
-#define entity_is_task(se) (!se->my_q)
-#endif
-	
+
 	if (!entity_is_task(se)) return;
 	
 	p = task_of(se);
@@ -220,10 +209,10 @@ static void update_burst_penalty(struct sched_entity *se) {
 }
 
 static inline u32 binary_smooth(u32 new, u32 old) {
-  int increment = new - old;
-  return (0 <= increment)?
-    old + ( increment >> (int)sched_burst_smoothness_long):
-    old - (-increment >> (int)sched_burst_smoothness_short);
+	int increment = new - old;
+	return (0 <= increment) ?
+		old + (increment >> (int)sched_burst_smoothness_long) :
+		old - (-increment >> (int)sched_burst_smoothness_short);
 }
 
 static void restart_burst(struct sched_entity *se) {
