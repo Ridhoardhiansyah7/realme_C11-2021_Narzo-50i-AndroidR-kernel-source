@@ -156,6 +156,9 @@ static void update_burst_score(struct sched_entity *se) {
 	u32 penalty = se->burst_penalty;
 	if (sched_burst_score_rounding) penalty += 0x2U;
 	se->burst_score = penalty >> 2;
+	u8 new_prio = min(39, prio + se->burst_score);
+	if (new_prio != prev_prio)
+		reweight_task(p, new_prio);
 }
 
 static void update_burst_penalty(struct sched_entity *se) {
