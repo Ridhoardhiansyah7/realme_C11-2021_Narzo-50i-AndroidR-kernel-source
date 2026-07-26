@@ -177,6 +177,10 @@ static inline u32 calc_burst_penalty(u64 burst_time) {
 
 static inline struct task_struct *task_of(struct sched_entity *se);
 
+static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
+	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->slice_score], 22);
+}
+
 static void update_burst_score(struct sched_entity *se) {
 	u32 penalty = se->burst_penalty;
 	if (sched_burst_score_rounding) penalty += 0x2U;
