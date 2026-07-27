@@ -156,13 +156,6 @@ uint __read_mostly sched_burst_cache_lifetime   = 60000000;
 
 #define MAX_BURST_PENALTY (39U << 2)
 
-static inline struct task_struct *task_of(struct sched_entity *se);
-static void reweight_task(struct task_struct *p, int prio);
-#ifndef entity_is_task
-#define entity_is_task(se) (!se->my_q)
-#endif
-
-
 static inline u32 log2plus1_u64_u32f8(u64 v) {
 	u32 msb = fls64(v);
 	s32 excess_bits = msb - 9;
