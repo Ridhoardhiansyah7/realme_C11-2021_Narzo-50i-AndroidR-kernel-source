@@ -71,6 +71,8 @@ static inline void cpu_load_update_active(struct rq *this_rq) { }
 static inline void check_for_migration(struct rq *rq, struct task_struct *p) { }
 #endif
 
+extern void reweight_task(struct task_struct *p, int prio);
+
 /*
  * Helpers for converting nanosecond timing to jiffy resolution
  */
