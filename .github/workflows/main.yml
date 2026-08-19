@@ -23,7 +23,8 @@ jobs:
       KERNEL_ROOT: ${{ github.workspace }}
       ARCH: arm64
       TZ: Asia/Jakarta
-      KBUILD_BUILD_USER: 'Ardhiansyah_Aflahal'
+      KBUILD_BUILD_USER: 'Aflahal'
+      
       # Ccache Flags
       USE_CCACHE: 1
       CCACHE_EXEC: /usr/bin/ccache
@@ -116,15 +117,19 @@ jobs:
           mkdir -p clang-r383902b
           wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/0e9e7035bf8ad42437c6156e5950eab13655b26c/clang-r383902b.tar.gz -O clang.tar.gz
           tar -xf clang.tar.gz -C clang-r383902b && rm clang.tar.gz
-          
+          echo "--> Clang downloaded"
+
           echo "--> Downloading GCC 14.3..."
           mkdir -p gcc-14.3
           wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz -O gcc.tar.xz
           tar -xf gcc.tar.xz -C gcc-14.3 --strip-components=1 && rm gcc.tar.xz
+          echo "--> GCC downloaded"
 
           echo "--> Setting permissions..."
           chmod +x ${{ env.CLANG_BASE }}/bin/*
           chmod +x ${{ env.GCC_64_BASE }}/bin/*
+          echo "--> Done"
+
 
       - name: Set up PATH and ccache
         run: |
