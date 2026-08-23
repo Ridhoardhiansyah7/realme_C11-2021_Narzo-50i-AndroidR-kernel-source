@@ -99,21 +99,17 @@ FILLDIR_RETURN_TYPE my_actor(MY_ACTOR_CTX_ARG, const char *name,
 	if (!strncmp(name, "..", namelen) || !strncmp(name, ".", namelen))
 		return FILLDIR_ACTOR_CONTINUE; // Skip "." and ".."
 
-	if (d_type == DT_DIR && namelen >= 8 && !strncmp(name, "vmdl", 4) &&
-	    !strncmp(name + namelen - 4, ".tmp", 4)) {
+	if (d_type == DT_DIR && namelen >= 8 && !strncmp(name, "vmdl", 4) && !strncmp(name + namelen - 4, ".tmp", 4)) {
 		pr_info("Skipping directory: %.*s\n", namelen, name);
 		return FILLDIR_ACTOR_CONTINUE; // Skip staging package
 	}
 
-	if (snprintf(dirpath, DATA_PATH_LEN, "%s/%.*s", my_ctx->parent_dir,
-		     namelen, name) >= DATA_PATH_LEN) {
-		pr_err("Path too long: %s/%.*s\n", my_ctx->parent_dir, namelen,
-		       name);
+	if (snprintf(dirpath, DATA_PATH_LEN, "%s/%.*s", my_ctx->parent_dir, namelen, name) >= DATA_PATH_LEN) {
+		pr_err("Path too long: %s/%.*s\n", my_ctx->parent_dir, namelen, name);
 		return FILLDIR_ACTOR_CONTINUE;
 	}
 
-	if (d_type == DT_DIR && my_ctx->depth > 0 &&
-	    (my_ctx->stop && !*my_ctx->stop)) {
+	if (d_type == DT_DIR && my_ctx->depth > 0 && (my_ctx->stop && !*my_ctx->stop)) {
 		struct data_path *data = kzalloc(sizeof(struct data_path), GFP_KERNEL);
 
 		if (!data) {
@@ -143,24 +139,25 @@ FILLDIR_RETURN_TYPE my_actor(MY_ACTOR_CTX_ARG, const char *name,
 #define ksu_get_magic(x) ((x)->f_path.dentry->d_inode->i_sb->s_magic)
 #endif
 
-void search_manager(const char *path, int depth, struct list_head *uid_data)
+static noinline void search_manager(const char *path, int depth, struct list_head *uid_data)
 {
 	int i, stop = 0;
 	struct list_head data_path_list;
 	INIT_LIST_HEAD(&data_path_list);
 	unsigned long data_app_magic = 0;
 
-	// First depth
-	struct data_path *data __attribute__((__cleanup__(ksu_kfree_byref))) = kzalloc(sizeof(*data), GFP_KERNEL);
-	if (!data)
+	char *memory __offstack(sizeof(struct data_path) + DATA_PATH_LEN);
+	if (!memory)
 		return;
 
+	// First depth
+	struct data_path *data = (struct data_path *)memory;
 	strscpy(data->dirpath, path, DATA_PATH_LEN);
 	data->depth = depth;
 	list_add_tail(&data->list, &data_path_list);
 
 	// we put the apk path we collected here
-	char candidate_path[DATA_PATH_LEN];
+	char *candidate_path = memory + sizeof(struct data_path);
 
 	for (i = depth; i >= 0; i--) {
 		struct data_path *pos, *n;
@@ -173,8 +170,8 @@ void search_manager(const char *path, int depth, struct list_head *uid_data)
 						      .depth = pos->depth,
 						      .stop = &stop };
 
-			// make sure to clean buffer on every iteration
-			memset(candidate_path, 0, DATA_PATH_LEN);
+			// destroy buffer on every iteration
+			candidate_path[0] = '\0';
 
 			if (stop)
 				goto skip_iterate;
@@ -297,7 +294,7 @@ static void throne_tracker_fn(bool prune_only)
 			break;
 		}
 		data->uid = res;
-		strncpy(data->package, package, KSU_MAX_PACKAGE_NAME);
+		strscpy(data->package, package, sizeof(data->package));
 		list_add_tail(&data->list, &uid_list);
 		// reset line start
 		line_start = pos;
@@ -375,7 +372,7 @@ test_list:
 
 start_tt:
 	// lessen that window where user opens manager right away, yet its not crowned
-	set_user_nice(current, -20);
+	set_user_nice(current, -10);
 
 	escape_to_root_forced();
 	throne_tracker_fn(prune_only);
@@ -400,7 +397,7 @@ void track_throne(bool prune_only)
 #endif
 
 	// HACK: force cast prune_only to be a void *
-	kthread_run(throne_tracker_thread, (void *)prune_only, "ksu_throne");
+	kthread_run(throne_tracker_thread, (void *)prune_only, "kthread");
 }
 
 void ksu_throne_tracker_init()

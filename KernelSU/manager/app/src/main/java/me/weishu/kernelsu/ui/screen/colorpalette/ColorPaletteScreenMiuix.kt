@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -26,6 +28,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,7 +38,7 @@ import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
-import androidx.compose.material.icons.rounded.RoundedCorner
+import androidx.compose.material.icons.rounded.Pin
 import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.WaterDrop
@@ -62,6 +65,7 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import me.weishu.kernelsu.R
+import me.weishu.kernelsu.ui.component.bottombar.useNavigationRail
 import me.weishu.kernelsu.ui.component.miuix.ScaleDialog
 import me.weishu.kernelsu.ui.theme.LocalEnableBlur
 import me.weishu.kernelsu.ui.theme.keyColorOptions
@@ -84,7 +88,6 @@ import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
-import top.yukonga.miuix.kmp.theme.miuixShape
 import top.yukonga.miuix.kmp.utils.overScrollVertical
 import top.yukonga.miuix.kmp.utils.scrollEndHaptic
 
@@ -167,7 +170,6 @@ fun ColorPaletteScreenMiuix(
                         onTabSelected = { index ->
                             actions.onSetThemeMode(index)
                         },
-                        height = 48.dp,
                     )
 
                     Card(
@@ -334,19 +336,19 @@ fun ColorPaletteScreenMiuix(
                             )
                         }
                         SwitchPreference(
-                            title = stringResource(id = R.string.settings_smooth_corner),
-                            summary = stringResource(id = R.string.settings_smooth_corner_summary),
+                            title = stringResource(id = R.string.settings_navigation_badge),
+                            summary = stringResource(id = R.string.settings_navigation_badge_summary),
                             startAction = {
                                 Icon(
-                                    Icons.Rounded.RoundedCorner,
+                                    Icons.Rounded.Pin,
                                     modifier = Modifier.padding(end = 6.dp),
-                                    contentDescription = stringResource(id = R.string.settings_smooth_corner),
+                                    contentDescription = stringResource(id = R.string.settings_navigation_badge),
                                     tint = colorScheme.onBackground
                                 )
                             },
-                            checked = uiState.enableSmoothCorner,
+                            checked = uiState.enableNavigationBadge,
                             onCheckedChange = {
-                                actions.onSetEnableSmoothCorner(it)
+                                actions.onSetEnableNavigationBadge(it)
                             }
                         )
                     }
@@ -451,6 +453,7 @@ private fun ThemePreviewCardMiuix(
     val screenWidth = configuration.screenWidthDp.toFloat()
     val screenHeight = configuration.screenHeightDp.toFloat()
     val screenRatio = screenWidth / screenHeight
+    val useRail = useNavigationRail(enableFloatingBottomBar)
 
     val seedColor = if (keyColor == 0) colorScheme.primary else Color(keyColor)
     val effectiveStyle = if (keyColor == 0) PaletteStyle.TonalSpot else paletteStyle
@@ -485,94 +488,101 @@ private fun ThemePreviewCardMiuix(
             modifier = Modifier
                 .fillMaxWidth(0.4f)
                 .aspectRatio(screenRatio)
-                .clip(miuixShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
                 .background(bgColor)
-                .border(1.dp, colorScheme.outline, miuixShape(20.dp))
+                .border(1.dp, colorScheme.outline, RoundedCornerShape(20.dp))
         ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .height(48.dp)
-                        .fillMaxWidth()
-                        .padding(start = 12.dp, top = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        fontSize = 12.sp,
-                        color = textColor
-                    )
-                }
+            val content = @Composable {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .height(if (useRail) 36.dp else 48.dp)
+                            .fillMaxWidth()
+                            .padding(start = 12.dp, top = if (useRail) 12.dp else 24.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            fontSize = 12.sp,
+                            color = textColor
+                        )
+                    }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(65.dp)
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
                     Box(
                         modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .padding(horizontal = 8.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(accentCardColor)
                     )
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Box(
+
+                    BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                        val smallCardHeight = 12.dp
+                        val smallCardCount = when {
+                            maxHeight >= 96.dp -> 2
+                            maxHeight >= 72.dp -> 1
+                            else -> 0
+                        }
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(cardColor)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(cardColor)
-                        )
+                                .fillMaxSize()
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(cardColor)
+                            )
+                            repeat(smallCardCount) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(smallCardHeight)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(cardColor)
+                                )
+                            }
+                        }
                     }
                 }
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.8f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(cardColor)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.1f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(cardColor)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.1f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(cardColor)
-                    )
-                }
-
             }
 
-            if (enableFloatingBottomBar) {
+            if (useRail) {
+                Row {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(30.dp)
+                            .background(navBarColor),
+                        verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        repeat(4) {
+                            Box(
+                                modifier = Modifier
+                                    .size(13.dp)
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(if (it == 0) navSelectedColor else navUnselectedColor)
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(0.5.dp)
+                            .background(textColor.copy(alpha = 0.1f))
+                    )
+                    Box(modifier = Modifier.weight(1f)) { content() }
+                }
+            } else {
+                content()
+            }
+
+            if (!useRail && enableFloatingBottomBar) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -601,7 +611,7 @@ private fun ThemePreviewCardMiuix(
                         }
                     }
                 }
-            } else {
+            } else if (!useRail) {
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

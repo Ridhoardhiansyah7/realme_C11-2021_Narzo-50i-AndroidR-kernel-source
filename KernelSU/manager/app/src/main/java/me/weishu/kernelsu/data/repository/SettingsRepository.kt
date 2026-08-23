@@ -13,10 +13,19 @@ interface SettingsRepository {
     var enableBlur: Boolean
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
+    var enableNavigationBadge: Boolean
     var pageScale: Float
     var enableWebDebugging: Boolean
-    var enableSmoothCorner: Boolean
+    var moduleSortEnabledFirst: Boolean
+    var moduleSortActionFirst: Boolean
+    var moduleRepoSortOrder: Int
+    var superuserShowSystemApps: Boolean
+    var superuserShowOnlyPrimaryUserApps: Boolean
+    var superuserSortOption: Int
+    var suLogFilters: Set<String>?
     var autoJailbreak: Boolean
+    var useSoftReboot: Boolean
+    val intentToken: String
 
     suspend fun getSuCompatStatus(): String
     suspend fun getSuCompatPersistValue(): Long?
@@ -28,6 +37,14 @@ interface SettingsRepository {
     suspend fun getKernelUmountStatus(): String
     fun isKernelUmountEnabled(): Boolean
     fun setKernelUmountEnabled(enabled: Boolean): Boolean
+
+    suspend fun getWebViewZygoteUmountStatus(): String
+    fun isWebViewZygoteUmountEnabled(): Boolean
+    fun setWebViewZygoteUmountEnabled(enabled: Boolean): Boolean
+
+    suspend fun getSelinuxHideStatus(): String
+    fun isSelinuxHideEnabled(): Boolean
+    fun setSelinuxHideEnabled(enabled: Boolean): Int
 
     suspend fun getSulogStatus(): String
     suspend fun getSulogPersistValue(): Long?

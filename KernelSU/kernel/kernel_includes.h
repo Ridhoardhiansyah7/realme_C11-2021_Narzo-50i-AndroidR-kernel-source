@@ -1,3 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2026 \xx
+ *
+ * This file is a downstream extension and NOT affiliated, endorsed by,
+ * or maintained by the official KernelSU developers.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ */
+
 #ifndef __KSU_H_KERNEL_INCLUDES
 #define __KSU_H_KERNEL_INCLUDES
 
@@ -41,6 +54,7 @@
 #include <linux/lockdep.h>
 #include <linux/lsm_audit.h>
 #include <linux/mm.h>
+#include <linux/mman.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/mount.h>
@@ -145,6 +159,73 @@
 #include <linux/lsm_hooks.h>
 #endif
 
+#ifdef CONFIG_KPROBES
+#include <linux/kprobes.h>
+#endif
+
+#ifndef __ro_after_init
+#define __ro_after_init
+#endif
+
+#ifndef __nocfi
+#define __nocfi
+#endif
+
+/**
+ * Linux kernel forbids c99 restrict
+ * however we can use builtin's restrict
+ */
+#define restrict __restrict
+
+/**
+ * old compilers does NOT know fallthrough, this is GNU/C23
+ * however we can use a comment and it silences it
+ * ref: https://elixir.bootlin.com/linux/v4.4.302/source/tools/include/linux/compiler.h#L121
+ */
+#ifndef fallthrough
+# if defined(__GNUC__) && __GNUC__ >= 7
+#  define fallthrough __attribute__ ((fallthrough))
+# else
+#  define fallthrough do {} while (0) /* fallthrough */
+# endif
+#endif
+
+/**
+ * we do NOT have memset_explicit on the linux kernel
+ *
+ * from: OPENSSL_cleanse, volatile function pointer prevents memset optimization
+ * https://github.com/openssl/openssl/blob/master/crypto/mem_clr.c
+ * 
+ */
+static __nocfi void *memset_explicit(void *s, int c, size_t count)
+{
+	static typeof(memset) *volatile memset_fnptr = memset;
+	return memset_fnptr(s, c, count);
+}
+
+// pseudo-raii / defer on C via __attribute__((__cleanup__()))
+#ifndef __cleanup
+#define __cleanup(fn) __attribute__((__cleanup__(fn)))
+#endif
+
+// check for guaranteed inline routines
+// if unavailable, use plain builtin
+#ifndef __has_builtin
+#define __has_builtin(x) (0)
+#endif
+
+#if __has_builtin(__builtin_memcpy_inline)
+#define memcpy_inline	__builtin_memcpy_inline
+#else
+#define memcpy_inline	__builtin_memcpy
+#endif
+
+#if __has_builtin(__builtin_memset_inline)
+#define memset_inline	__builtin_memset_inline
+#else
+#define memset_inline	__builtin_memset
+#endif
+
 /**
  * replace common mem/str functions with builtins
  * so legacy kernels get better inlining and optimized routines (with newer compielrs)
@@ -174,8 +255,26 @@
 #define strpbrk		__builtin_strpbrk
 #define strrchr		__builtin_strrchr
 #define strspn		__builtin_strspn
-//#define strstr		__builtin_strstr
+#define strstr		__builtin_strstr
 
 #endif // !CONFIG_KSU_DEBUG
+
+/**
+ * redirect all dmesg/printk logging messages to kernel's no_printk macro.
+ * this is an option offerred to shut up KernelSU's routine logging.
+ *
+ */
+#if defined(CONFIG_KSU_NOPRINTK) && !defined(CONFIG_KSU_DEBUG)
+#define pr_emerg(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_alert(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_crit(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_err(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_warn(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_notice(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_info(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_debug(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define pr_devel(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#define printk(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+#endif // CONFIG_KSU_NOPRINTK && !CONFIG_KSU_DEBUG
 
 #endif // __KSU_H_KERNEL_INCLUDES

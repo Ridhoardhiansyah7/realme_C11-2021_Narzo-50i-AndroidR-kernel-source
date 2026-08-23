@@ -60,7 +60,7 @@ static void ksu_mnt_ns_global(void)
 		pwd_path = NULL;
 	}
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 try_setns:
 
 	rcu_read_lock();
@@ -80,7 +80,7 @@ try_setns:
 		goto out;
 	}
 	struct path ns_path;
-	long ret = (long)ns_get_path(&ns_path, pid1_task, &mntns_operations);
+	long ret = ns_get_path(&ns_path, pid1_task, &mntns_operations);
 	put_task_struct(pid1_task);
 	if (ret) {
 		pr_warn("failed get path for init mount namespace: %ld\n", ret);
@@ -124,7 +124,7 @@ try_setns:
 	fd_install(fd, ns_file);
 	ret = ksu_sys_setns(fd, CLONE_NEWNS);
 
-	close_fd(fd);
+	ksu_close_fd(fd);
 
 	if (ret) {
 		pr_warn("call setns failed: %ld\n", ret);
@@ -176,11 +176,6 @@ void setup_mount_ns(int32_t ns_mode)
 	if (ns_mode != KSU_NS_GLOBAL && ns_mode != KSU_NS_INDIVIDUAL) {
 		pr_warn("pid: %d ,unknown mount namespace mode: %d\n", current->pid,
 				ns_mode);
-		return;
-	}
-
-	if (!ksu_cred) {
-		pr_err("no ksu cred! skip mnt_ns magic for pid: %d.\n", current->pid);
 		return;
 	}
 
