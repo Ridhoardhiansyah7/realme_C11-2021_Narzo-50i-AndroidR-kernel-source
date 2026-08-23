@@ -1,8 +1,8 @@
-name: SukiSU Integration Only
+name: KSU Integration
 
 on:
   workflow_dispatch:
-  
+
 
 jobs:
   integrate:
@@ -14,7 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        ref: 4.14.200-KernelSU
+        ref: 4.14.200-KernelSU-permissive
         fetch-depth: 0
 
     - name: Configure Git identity
@@ -22,20 +22,22 @@ jobs:
         git config --local user.name "Aflahal"
         git config --local user.email "zxx97607@gmail.com"
 
-    - name: Run SukiSU Setup
+    - name: Run KernelSU Setup
       run: |
+        rm -rf KernelSU
         curl -LSs "https://raw.githubusercontent.com/backslashxx/KernelSU/master/kernel/setup.sh" | bash
+        
         git rm -r --cached KernelSU || true
         find KernelSU -name ".git" -exec rm -rf {} + || true
 
-
     - name: Commit and Push
       run: |
-        git add .
+        git add -A
         
         if git diff --cached --quiet; then
           echo "No changes detected."
         else
-          git commit -m "kernel: import KernelSU source"
-          git push origin 4.14.200-KernelSU
+          git commit -m "kernel: update KernelSU source"
+          git push origin 4.14.200-KernelSU-permissive
         fi
+        
