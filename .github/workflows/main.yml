@@ -8,6 +8,11 @@ on:
         description: 'Kernel defconfig name (e.g., RMX3235_defconfig)'
         required: true
         default: 'RMX3235_defconfig'
+      isPermissive:
+        description: 'check this option to force permissive kernel'
+        required: true
+        type: boolean
+        default: false        
       build_kernel_module:
         description: "set to true if you want to build (.ko) file"
         required: true
@@ -139,6 +144,18 @@ jobs:
           echo "[INFO] Configuring ccache..."
           ccache -M 5G
           ccache -z
+
+      - name: Patch permissive
+        if: "${{ inputs.isPermissive == true }}"
+        run: |
+          # patch selinuxfs and hooks to force permissive
+          TARGET_BRANCH="4.14.200-KernelSU-permissive"
+          git fetch --depth 1 origin $TARGET_BRANCH
+          
+          git checkout FETCH_HEAD -- security/selinux/hooks.c
+          git checkout FETCH_HEAD -- security/selinux/selinuxfs.c
+          
+          echo "Patch successfuly from $TARGET_BRANCH branch"
 
       - name: Build Kernel, Modules, and DTBs
         run: |
