@@ -1,0 +1,57 @@
+name: EROFS 4.14 Integration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: 4.14.200-KernelSU
+        fetch-depth: 0
+
+    - name: Configure Git identity
+      run: |
+        git config --local user.name "Aflahal"
+        git config --local user.email "zxx97607@gmail.com"
+
+    - name: Fetch EROFS 4.14 Source
+      run: |
+        mkdir -p fs
+        mkdir -p include/trace/events
+        rm -rf fs/erofs
+
+        echo "Cloning souce..."
+        git clone --filter=blob:none --no-checkout --depth 1 -b 4.14.199-erofs https://github.com/Ridhoardhiansyah7/android_kernel_m168.git temp_repo
+        
+        cd temp_repo
+        git sparse-checkout set fs/erofs include/trace/events
+
+        git checkout
+        cd ..
+
+        mv temp_repo/fs/erofs fs/erofs
+        mv temp_repo/include/trace/events/erofs.h include/trace/events/ 
+        rm -rf temp_repo
+        
+        echo "Done!"
+
+    - name: Commit and Push
+      run: |
+        # git add .
+        git add fs/erofs
+        git add include/trace/events/erofs.h
+        
+        if git diff --cached --quiet; then
+          echo "No available changes"
+        else
+          git commit -m "fs: import backport EROFS for 4.14.y"
+          
+          git push origin 4.14.200-KernelSU
+        fi
