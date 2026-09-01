@@ -1,0 +1,56 @@
+name: Update Trusty drivers
+
+on:
+  push:
+    branches:
+      - test2
+  workflow_dispatch:
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: test2
+        fetch-depth: 0
+
+    - name: Configure Git identity
+      run: |
+        git config --local user.name "Aflahal"
+        git config --local user.email "zxx97607@gmail.com"
+
+    - name: Fetch EROFS 4.14 Source
+      run: |
+        rm -rf drivers/trusty
+
+        echo "Cloning souce..."
+        git clone --filter=blob:none --no-checkout --depth 1 -b 4.14.199-erofs https://github.com/Ridhoardhiansyah7/android_kernel_m168.git temp_repo
+        
+        cd temp_repo
+        git sparse-checkout set drivers/trusty
+
+        git checkout
+        cd ..
+
+        mv temp_repo/drivers/trusty drivers/trusty
+        rm -rf temp_repo
+        
+        echo "Done!"
+
+    - name: Commit and Push
+      run: |
+        # git add .
+        git add drivers/trusty
+        
+        if git diff --cached --quiet; then
+          echo "No available changes"
+        else
+          git commit -m "trusty: update trusty drivers"
+          
+          git push origin test2
+        fi
