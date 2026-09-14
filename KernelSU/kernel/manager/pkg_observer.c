@@ -1,13 +1,27 @@
-/**
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2026 \xx
+ *
+ * This file is a downstream extension and NOT affiliated, endorsed by,
+ * or maintained by the official KernelSU developers.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ */
+
+/*
  * ! this is on inode_rename, NOT fsnotify
  * we have access to LSM and overhead is way lower.
  * we watch one file, check ifs on the same parent inode.
  * a few int compare and a ptr compare. thats it.
  * as for throne tracker, we just async it by hand
  * by offloading it to a kthread.
+ * reuses code from: https://github.com/tiann/KernelSU/blob/v1.0.5/kernel/core_hook.c#L188
  */
 
-static void *system_dir_inode_ptr = NULL;
+static void *system_dir_inode_ptr = nullptr;
 
 static noinline void ksu_grab_data_system_inode()
 {
@@ -23,9 +37,9 @@ static noinline void ksu_grab_data_system_inode()
 	path_put(&path);
 }
 
-static noinline void ksu_rename_observer_slow(struct dentry *old_dentry, struct dentry *new_dentry)
+static void ksu_rename_observer_slow(struct dentry *old_dentry, struct dentry *new_dentry)
 {
-	system_dir_inode_ptr = NULL; // reset cached inode
+	system_dir_inode_ptr = nullptr; // reset cached inode
 
 	char path[128] = { 0 };
 	char *buf = dentry_path_raw(new_dentry, path, sizeof(path) - 1);
@@ -55,12 +69,14 @@ static inline void ksu_rename_observer(struct dentry *old_dentry, struct dentry 
 	if (likely(current_uid().val != 1000))
 		return;
 
+	constexpr char plist[] = "packages.list";
+
 	// HASH_LEN_DECLARE see dcache.h
-	if (likely(new_dentry->d_name.len != sizeof("packages.list") - 1  ))
+	if (likely(new_dentry->d_name.len != sizeof(plist) - 1  ))
 		return;
 
 	// /data/system/packages.list.tmp -> /data/system/packages.list
-	if (likely(!!__builtin_memcmp(new_dentry->d_iname, "packages.list", sizeof("packages.list") - 1 )))
+	if (likely(!!__builtin_memcmp(new_dentry->d_iname, plist, sizeof(plist) - 1 )))
 		return;
 
 	// cache dir inode, we try to go for fast path, lockless
