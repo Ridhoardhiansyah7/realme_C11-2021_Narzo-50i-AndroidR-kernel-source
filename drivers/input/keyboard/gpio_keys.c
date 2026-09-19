@@ -30,6 +30,7 @@
 #include <linux/of.h>
 #include <linux/of_irq.h>
 #include <linux/spinlock.h>
+#include <linux/pinctrl/consumer.h>
 
 struct gpio_button_data {
 	const struct gpio_keys_button *button;
@@ -738,6 +739,30 @@ static const struct of_device_id gpio_keys_of_match[] = {
 };
 MODULE_DEVICE_TABLE(of, gpio_keys_of_match);
 
+/*
+	Adapt from 5.4 kernel
+*/
+static int sprd_pin_set(struct platform_device *pdev)
+{
+    struct pinctrl *p = NULL;    
+    struct pinctrl_state *pinctrl_state0 = NULL;
+    char *s0 = "eic_dbc2";
+    int ret0;
+    
+    p = devm_pinctrl_get(&pdev->dev);
+    if (IS_ERR(p))
+        return 0;
+    
+    /*set function to eic*/
+    pinctrl_state0 = pinctrl_lookup_state(p, s0);
+    if (IS_ERR(pinctrl_state0))
+        return 0;
+    
+    ret0 =  pinctrl_select_state(p, pinctrl_state0);
+    return 0;
+}
+
+
 static int gpio_keys_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -754,6 +779,9 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		if (IS_ERR(pdata))
 			return PTR_ERR(pdata);
 	}
+
+	//Adapt from 5.4 kernel
+	sprd_pin_set(pdev);
 
 	size = sizeof(struct gpio_keys_drvdata) +
 			pdata->nbuttons * sizeof(struct gpio_button_data);
