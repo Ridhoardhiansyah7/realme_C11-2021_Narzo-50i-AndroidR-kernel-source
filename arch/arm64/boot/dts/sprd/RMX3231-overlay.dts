@@ -235,11 +235,13 @@
 
 			gpio-keys {
 				compatible = "gpio-keys";
+				pinctrl-names = "eic_dbc2";
+				pinctrl-0 = <&eic_dbc2>;
 
 				key-volumedown {
 					label = "Volume Down Key";
 					linux,code = <KEY_VOLUMEDOWN>;
-					gpios = <&ap_gpio 124 GPIO_ACTIVE_LOW>;
+					gpios = <&ap_gpio 2 GPIO_ACTIVE_LOW>;
 					debounce-interval = <2>;
 					wakeup-source;
 				};
@@ -556,6 +558,11 @@
 
 	gpio_pwm: keyoutnew2 {
 		pins = "SHARKL3_U0CTS";
+		function = "func2";
+	};
+
+	eic_dbc2: extint2 {
+		pins = "SHARKL3_KEYIN0";
 		function = "func2";
 	};
 
